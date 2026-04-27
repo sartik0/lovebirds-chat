@@ -9,7 +9,6 @@
         :root { --sarti: rgb(52, 137, 255); --elize: rgb(252, 200, 77); --jaz: rgb(249, 114, 217); }
         body, html { margin: 0; padding: 0; height: 100%; background: #0a0a0a; color: white; font-family: sans-serif; overflow: hidden; }
         
-        /* Login Screen */
         #overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #overlay select, #overlay button { padding: 15px; font-size: 18px; border-radius: 8px; width: 320px; margin: 10px; }
         #overlay button { background: #fff; color: #000; font-weight: bold; cursor: pointer; border: none; }
@@ -17,40 +16,42 @@
         #app { display: none; height: 100vh; width: 100%; display: flex; }
         #workspace { flex: 1; display: flex; justify-content: center; background: #0a0a0a; overflow-x: auto; }
         
-        /* 1400px Fixed Width */
         #chat-container { width: 1400px; min-width: 1400px; background: #111; display: flex; flex-direction: column; border-left: 1px solid #222; border-right: 1px solid #222; }
         #chat-window { flex: 1; overflow-y: auto; padding: 50px; display: flex; flex-direction: column; gap: 30px; }
 
         /* ALIGNMENT: AUTHOR ON RIGHT, RECEIVED ON LEFT */
-        .msg-row { display: flex; width: 100%; margin-bottom: 10px; }
-        
-        /* Author (Self) -> ALWAYS RIGHT */
+        .msg-row { display: flex; width: 100%; }
         .msg-row.self { justify-content: flex-end; }
         .msg-row.self .msg-content-wrapper { flex-direction: row-reverse; }
-        .msg-row.self .avatar { margin-left: 15px; }
+        .msg-row.self .avatar { margin-left: 20px; }
 
-        /* Received (Other) -> ALWAYS LEFT */
         .msg-row.other { justify-content: flex-start; }
         .msg-row.other .msg-content-wrapper { flex-direction: row; }
-        .msg-row.other .avatar { margin-right: 15px; }
+        .msg-row.other .avatar { margin-right: 20px; }
 
         .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 80%; }
-        .avatar { width: 55px; height: 55px; border-radius: 50%; background: #333; flex-shrink: 0; border: 2px solid #222; }
+        .avatar { width: 60px; height: 60px; border-radius: 50%; background: #333; flex-shrink: 0; border: 2px solid #222; }
         
-        /* Bubbles & Forced Black Text */
-        .bubble { border-radius: 18px; overflow: hidden; color: #000 !important; font-size: 19px; line-height: 1.4; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .bubble { border-radius: 18px; overflow: hidden; color: #000 !important; font-size: 20px; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.4); position: relative; }
         .bubble.Sarti { background: var(--sarti); }
         .bubble.Elize { background: var(--elize); }
         .bubble.Jaz { background: var(--jaz); }
 
-        .lang-top { padding: 18px 22px; font-weight: bold; min-width: 100px; }
+        .lang-top { padding: 20px 25px; font-weight: bold; white-space: pre-wrap; min-height: 1.5em; }
         .lang-divider { height: 1px; background: rgba(0,0,0,0.1); width: 100%; }
-        .lang-bottom { padding: 12px 22px; font-size: 16px; opacity: 0.7; border-top: 1px solid rgba(0,0,0,0.05); }
+        .lang-bottom { padding: 15px 25px; font-size: 18px; opacity: 0.7; white-space: pre-wrap; border-top: 1px solid rgba(0,0,0,0.05); }
 
-        /* Input area */
-        #input-dock { padding: 25px; background: #1a1a1a; border-top: 1px solid #222; display: flex; flex-direction: column; align-items: center; }
-        #msg-input { width: 900px; height: 70px; padding: 15px; font-size: 17px; border-radius: 8px; background: #fff; color: #000; resize: none; border: none; outline: none; }
-        #send-btn { width: 250px; margin-top: 15px; padding: 12px; background: #444; color: #fff; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
+        /* Retry Button Style */
+        .retry-btn { 
+            display: inline-block; margin: 0 25px 10px 25px; font-size: 12px; font-weight: bold; 
+            text-transform: uppercase; cursor: pointer; color: rgba(0,0,0,0.5); border: 1px solid rgba(0,0,0,0.2);
+            padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.2);
+        }
+        .retry-btn:hover { background: rgba(255,255,255,0.4); color: #000; }
+
+        #input-dock { padding: 30px; background: #1a1a1a; border-top: 1px solid #222; display: flex; flex-direction: column; align-items: center; }
+        #msg-input { width: 1000px; height: 80px; padding: 15px; font-size: 18px; border-radius: 10px; background: #fff; color: #000; resize: none; border: none; outline: none; }
+        #send-btn { width: 300px; margin-top: 15px; padding: 15px; background: #444; color: #fff; font-weight: bold; border: none; cursor: pointer; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -79,11 +80,7 @@
         const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
 
         let activeUser = "";
-        const avatars = {
-            'Sarti': 'https://placehold.co/100/3489ff/ffffff?text=S',
-            'Elize': 'https://placehold.co/100/fcc84d/000000?text=E',
-            'Jaz': 'https://placehold.co/100/f972d9/000000?text=J'
-        };
+        const avatars = { 'Sarti': 'https://placehold.co/100/3489ff/ffffff?text=S', 'Elize': 'https://placehold.co/100/fcc84d/000000?text=E', 'Jaz': 'https://placehold.co/100/f972d9/000000?text=J' };
 
         document.getElementById('login-btn').onclick = () => {
             activeUser = document.getElementById('user-select').value;
@@ -93,11 +90,27 @@
         };
 
         async function translateText(text, targetLang) {
+            if (!text) return "";
             try {
                 const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLang}`);
                 const data = await res.json();
-                return data.responseData.translatedText;
-            } catch (e) { return text; }
+                if (data?.responseData?.translatedText && data.responseData.translatedText !== "null") {
+                    return data.responseData.translatedText;
+                }
+                return null; // Return null if failed so we can show the button
+            } catch (e) { return null; }
+        }
+
+        async function manualRetry(btn, originalText) {
+            const targetLang = (activeUser === 'Sarti') ? 'en' : 'zh';
+            btn.innerText = "Translating...";
+            const translated = await translateText(originalText, targetLang);
+            if (translated) {
+                btn.parentElement.querySelector('.lang-top').innerText = translated;
+                btn.remove();
+            } else {
+                btn.innerText = "Failed. Try Again?";
+            }
         }
 
         async function draw(msg) {
@@ -106,17 +119,16 @@
             const row = document.createElement('div');
             row.className = `msg-row ${isSelf ? 'self' : 'other'}`;
             
-            let topText = msg.content;
-            let bottomText = msg.content;
+            let topDisplay = msg.content;
+            let needsRetry = false;
 
-            // REAL-TIME TRANSLATION LOGIC
             if (!isSelf) {
-                // If you are Sarti (English), translate incoming messages to English
-                if (activeUser === 'Sarti') {
-                    topText = await translateText(msg.content, 'en');
+                const target = (activeUser === 'Sarti') ? 'en' : 'zh';
+                const result = await translateText(msg.content, target);
+                if (result) {
+                    topDisplay = result;
                 } else {
-                    // If you are Elize or Jaz, translate Sarti's English to Chinese
-                    topText = await translateText(msg.content, 'zh');
+                    needsRetry = true;
                 }
             }
 
@@ -124,9 +136,10 @@
                 <div class="msg-content-wrapper">
                     <img src="${avatars[msg.sender]}" class="avatar">
                     <div class="bubble ${msg.sender}">
-                        <div class="lang-top">${topText}</div>
+                        <div class="lang-top">${topDisplay}</div>
                         <div class="lang-divider"></div>
-                        <div class="lang-bottom">${bottomText}</div>
+                        <div class="lang-bottom">${msg.content}</div>
+                        ${needsRetry ? `<div class="retry-btn" onclick="manualRetry(this, '${msg.content.replace(/'/g, "\\'")}')">Translate</div>` : ''}
                     </div>
                 </div>
             `;
@@ -139,8 +152,7 @@
             const text = input.value.trim();
             if (!text) return;
             await _client.from('messages').insert([{ sender: activeUser, content: text }]);
-            input.value = "";
-            input.focus();
+            input.value = ""; input.focus();
         }
 
         document.getElementById('send-btn').onclick = send;
@@ -149,9 +161,7 @@
         async function startSync() {
             const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true });
             document.getElementById('chat-window').innerHTML = "";
-            if (data) {
-                for (const m of data) { await draw(m); }
-            }
+            if (data) { for (const m of data) { await draw(m); } }
             _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async p => await draw(p.new)).subscribe();
         }
     </script>
