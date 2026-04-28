@@ -11,10 +11,9 @@
             --sarti: rgb(52, 137, 255); 
             --elize: rgb(252, 200, 77); 
             --jaz: rgb(249, 114, 217); 
-            --line-color: rgb(200, 191, 231); /* RGB 200, 191, 231 */
+            --line-color: rgb(200, 191, 231); 
         }
 
-        /* 5 & 6: FULL BLACK / BACKGROUND DEF */
         body, html { 
             margin: 0; padding: 0; height: 100%; 
             background-color: #000;
@@ -25,22 +24,30 @@
 
         #app { display: flex; height: 100vh; width: 100%; justify-content: center; }
         
-        /* 1400px Centered Workspace - NO GLOBAL SIDE BORDERS */
+        /* 1400px Centered Workspace */
         #workspace { width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
 
-        /* 1 & 2: TOP LINE AND LOGO BELOW IT */
-        #top-line { width: 100%; height: 2px; background: var(--line-color); margin-top: 20px; }
+        /* THE TOP-MOST LINE */
+        #top-header-line { width: 100%; height: 1px; background: var(--line-color); margin-top: 20px; opacity: 0.8; }
         #logo-wrap { margin: 15px 0; }
-        #main-logo { height: 80px; width: auto; } /* Placeholder for Logo */
+        #main-logo { height: 85px; width: auto; }
 
-        /* 2 & 4: THE CHAT BOX - DISCONNECTED LINES */
+        /* THE CHAT AREA CONTENT (No Border) */
         #chat-window { 
-            width: 1200px; height: 500px; 
-            border: 2px solid var(--line-color); 
-            background: rgba(0,0,0,0.6);
-            margin-bottom: 20px; padding: 30px;
+            width: 1000px; height: 480px; 
+            margin: 20px 0; padding: 20px;
             overflow-y: auto; display: flex; flex-direction: column; gap: 25px;
+            z-index: 5;
         }
+
+        /* 1. THE 4 DISCONNECTED BORDER LINES FOR THE CHAT AREA */
+        .chat-line-h { position: absolute; width: 1000px; height: 1px; background: var(--line-color); left: 200px; }
+        #chat-line-top { top: 145px; }    /* Top border of chat */
+        #chat-line-bottom { top: 665px; } /* Bottom border of chat */
+
+        .chat-line-v { position: absolute; width: 1px; height: 350px; background: var(--line-color); top: 230px; }
+        #chat-line-left { left: 50px; }   /* Floating left border */
+        #chat-line-right { right: 50px; } /* Floating right border */
 
         /* MESSAGE ALIGNMENT */
         .msg-row { display: flex !important; width: 100% !important; }
@@ -59,39 +66,30 @@
         .lang-top { padding: 12px 18px; font-weight: bold; }
         .lang-bottom { padding: 10px 18px; font-size: 16px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        /* 4: SLIM INPUT BOX DESIGN */
-        #input-area-wrap { width: 1200px; position: relative; }
+        /* INPUT BOX DESIGN */
+        #input-area-wrap { width: 1200px; position: relative; margin-top: 10px; }
         #input-box { 
             width: 100%; height: 45px; 
-            border: 2px solid var(--line-color); 
+            border: 1px solid var(--line-color); 
             display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
         }
-        .input-icons { display: flex; gap: 15px; font-size: 20px; color: var(--line-color); margin-right: 15px; }
-        #msg-input { 
-            flex: 1; background: transparent; border: none; color: white; 
-            font-size: 16px; outline: none; height: 100%; 
-        }
-        #send-btn { background: transparent; border: none; color: var(--line-color); font-size: 22px; cursor: pointer; }
+        .input-icons { display: flex; gap: 15px; font-size: 18px; color: var(--line-color); margin-right: 15px; }
+        #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
+        #send-btn { background: transparent; border: none; color: var(--line-color); font-size: 20px; cursor: pointer; }
 
-        /* 3: THE AVATAR CRADLE STRUCTURE */
-        #cradle-wrap { width: 1200px; position: relative; height: 150px; }
-        
-        /* Side bars connecting input box to avatar line */
-        .cradle-arm { position: absolute; width: 2px; height: 60px; background: var(--line-color); top: 0; }
+        /* CRADLE STRUCTURE */
+        #cradle-wrap { width: 1200px; position: relative; height: 140px; }
+        .cradle-arm { position: absolute; width: 1px; height: 50px; background: var(--line-color); top: 0; }
         .arm-left { left: 0; }
         .arm-right { right: 0; }
-
-        /* Horizontal line connecting the circles */
-        #avatar-line { position: absolute; top: 60px; left: 0; width: 100%; height: 2px; background: var(--line-color); }
-
-        /* 3: THREE AVATAR PLACEHOLDERS */
+        #avatar-line { position: absolute; top: 50px; left: 0; width: 100%; height: 1px; background: var(--line-color); }
         #avatar-placeholders { 
-            position: absolute; top: 15px; width: 100%; 
+            position: absolute; top: 5px; width: 100%; 
             display: flex; justify-content: space-around; align-items: center; 
         }
         .placeholder-circle { 
             width: 90px; height: 90px; border-radius: 50%; 
-            border: 2px solid var(--line-color); background: #000;
+            border: 1px solid var(--line-color); background: #000;
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
         }
@@ -102,11 +100,16 @@
 
     <div id="app">
         <div id="workspace">
-            <div id="top-line"></div>
+            <div id="top-header-line"></div>
             
             <div id="logo-wrap">
-                <img id="main-logo" src="PLACEHOLDER_FOR_MAIN_LOGO.png" alt="Logo">
+                <img id="main-logo" src="PLACEHOLDER_FOR_MAIN_LOGO.png">
             </div>
+
+            <div id="chat-line-top" class="chat-line-h"></div>
+            <div id="chat-line-bottom" class="chat-line-h"></div>
+            <div id="chat-line-left" class="chat-line-v"></div>
+            <div id="chat-line-right" class="chat-line-v"></div>
 
             <div id="chat-window"></div>
 
@@ -125,7 +128,6 @@
                 <div class="cradle-arm arm-left"></div>
                 <div class="cradle-arm arm-right"></div>
                 <div id="avatar-line"></div>
-                
                 <div id="avatar-placeholders">
                     <div class="placeholder-circle"><img src="AVATAR_1_PLACEHOLDER.png"></div>
                     <div class="placeholder-circle"><img src="AVATAR_2_PLACEHOLDER.png"></div>
@@ -140,7 +142,7 @@
         const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZ3Nmd2hlbWJsbXNmaHJram11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTMzMDYsImV4cCI6MjA5MjQ2OTMwNn0.S8YLjVm-R_qKE_Vzj6xANyoN1DEmJ0oHJCEK1y18QUY'; 
         const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-        let activeUser = "Sarti"; // Defaulting for design test
+        let activeUser = "Sarti"; 
         const avatars = {
             'Sarti': 'AVATAR_1_PLACEHOLDER.png',
             'Elize': 'AVATAR_2_PLACEHOLDER.png',
@@ -191,6 +193,7 @@
 
         async function startSync() {
             const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true });
+            document.getElementById('chat-window').innerHTML = "";
             if (data) { for (const m of data) { await draw(m); } }
             _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async p => await draw(p.new)).subscribe();
         }
