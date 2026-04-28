@@ -27,12 +27,11 @@
         /* 1400px Centered Workspace */
         #workspace { width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
 
-        /* THE TOP-MOST LINE */
-        #top-header-line { width: 100%; height: 1px; background: var(--line-color); margin-top: 20px; opacity: 0.8; }
-        #logo-wrap { margin: 15px 0; }
+        /* LOGO WRAP - Positioned below the moved line */
+        #logo-wrap { margin-top: 50px; margin-bottom: 15px; z-index: 10; }
         #main-logo { height: 85px; width: auto; }
 
-        /* THE CHAT AREA CONTENT (No Border) */
+        /* THE CHAT AREA CONTENT */
         #chat-window { 
             width: 1000px; height: 480px; 
             margin: 20px 0; padding: 20px;
@@ -40,14 +39,17 @@
             z-index: 5;
         }
 
-        /* 1. THE 4 DISCONNECTED BORDER LINES FOR THE CHAT AREA */
+        /* THE 4 DISCONNECTED BORDER LINES */
         .chat-line-h { position: absolute; width: 1000px; height: 1px; background: var(--line-color); left: 200px; }
-        #chat-line-top { top: 145px; }    /* Top border of chat */
-        #chat-line-bottom { top: 665px; } /* Bottom border of chat */
+        
+        /* 2. MOVED LINE: This was below the logo, now exactly at the top (20px) where the old line was */
+        #chat-line-top { top: 20px; }    
+
+        #chat-line-bottom { top: 665px; } 
 
         .chat-line-v { position: absolute; width: 1px; height: 350px; background: var(--line-color); top: 230px; }
-        #chat-line-left { left: 50px; }   /* Floating left border */
-        #chat-line-right { right: 50px; } /* Floating right border */
+        #chat-line-left { left: 50px; }   
+        #chat-line-right { right: 50px; } 
 
         /* MESSAGE ALIGNMENT */
         .msg-row { display: flex !important; width: 100% !important; }
@@ -100,13 +102,13 @@
 
     <div id="app">
         <div id="workspace">
-            <div id="top-header-line"></div>
             
+            <div id="chat-line-top" class="chat-line-h"></div>
+
             <div id="logo-wrap">
                 <img id="main-logo" src="PLACEHOLDER_FOR_MAIN_LOGO.png">
             </div>
 
-            <div id="chat-line-top" class="chat-line-h"></div>
             <div id="chat-line-bottom" class="chat-line-h"></div>
             <div id="chat-line-left" class="chat-line-v"></div>
             <div id="chat-line-right" class="chat-line-v"></div>
