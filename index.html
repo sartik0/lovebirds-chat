@@ -22,8 +22,26 @@
             color: white; font-family: sans-serif; overflow: hidden; 
         }
 
-        #app { display: flex; height: 100vh; width: 100%; justify-content: center; }
+        /* 1. RESTORED OVERLAY CSS */
+        #overlay { 
+            position: fixed; inset: 0; background: #000; z-index: 1000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
         
+        /* 2. OVERLAY LOGO: 512x512, 200px from Top */
+        #overlay-logo { 
+            position: absolute; top: 200px; width: 512px; height: 512px; 
+            object-fit: contain; 
+        }
+
+        #overlay h1 { color: #fff; margin-top: 450px; margin-bottom: 20px; font-weight: 300; letter-spacing: 2px; }
+        #overlay select, #overlay button { 
+            padding: 15px; font-size: 18px; border-radius: 8px; width: 320px; 
+            margin: 10px; border: 1px solid var(--line-color); background: #111; color: white; 
+        }
+        #overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
+
+        #app { display: none; height: 100vh; width: 100%; justify-content: center; }
         #workspace { width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
 
         /* MOVED LINE: Exactly at 20px */
@@ -37,8 +55,6 @@
         #chat-line-left { left: 50px; }   
         #chat-line-right { right: 50px; } 
 
-        /* CHAT WINDOW: 1220px width centered in 1400px leaves exactly 90px on each side.
-           90px (message edge) - 50px (line position) = 40px GAP exactly. */
         #chat-window { 
             width: 1220px; height: 480px; 
             margin: 20px 0; padding: 20px 0;
@@ -46,7 +62,7 @@
             z-index: 5;
         }
 
-        /* MESSAGE ALIGNMENT */
+        /* MESSAGE ALIGNMENT - 40px Gap Rule */
         .msg-row { display: flex !important; width: 100% !important; padding: 0 !important; }
         .msg-row.self { justify-content: flex-end !important; }
         .msg-row.self .msg-content-wrapper { flex-direction: row-reverse; }
@@ -90,6 +106,17 @@
 </head>
 <body>
 
+    <div id="overlay">
+        <img id="overlay-logo" src="OVERLAY_LOGO_512.png" alt="Logo">
+        <h1>LOGIN</h1>
+        <select id="user-select">
+            <option value="Sarti">Sarti</option>
+            <option value="Elize">Elize</option>
+            <option value="Jaz">Jaz</option>
+        </select>
+        <button id="login-btn">ENTER CHAT</button>
+    </div>
+
     <div id="app">
         <div id="workspace">
             <div id="chat-line-top"></div>
@@ -127,11 +154,19 @@
         const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZ3Nmd2hlbWJsbXNmaHJram11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTMzMDYsImV4cCI6MjA5MjQ2OTMwNn0.S8YLjVm-R_qKE_Vzj6xANyoN1DEmJ0oHJCEK1y18QUY'; 
         const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-        let activeUser = "Sarti"; 
+        let activeUser = ""; // Set on login
         const avatars = {
             'Sarti': 'Sarti.png',
             'Elize': 'Elize.png',
             'Jaz': 'Jaz.png'
+        };
+
+        // RESTORED LOGIN LOGIC
+        document.getElementById('login-btn').onclick = () => {
+            activeUser = document.getElementById('user-select').value;
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            startSync();
         };
 
         async function draw(msg) {
@@ -182,7 +217,6 @@
             if (data) { for (const m of data) { await draw(m); } }
             _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async p => await draw(p.new)).subscribe();
         }
-        startSync();
     </script>
 </body>
 </html>
