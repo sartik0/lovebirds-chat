@@ -22,6 +22,9 @@
             color: white; font-family: sans-serif; overflow: hidden; 
         }
 
+        /* KILL ALL BROWSER FOCUS RINGS */
+        *:focus { outline: none !important; }
+
         /* OVERLAY FIXES */
         #overlay { 
             position: fixed; inset: 0; background: #000; z-index: 1000; 
@@ -30,27 +33,27 @@
         
         #overlay-logo-container {
             position: absolute; top: 150px; width: 100%; display: flex; justify-content: center;
-            pointer-events: none; /* Image can't block clicks */
+            pointer-events: none;
         }
         #overlay-logo { width: 256px; height: 256px; object-fit: contain; }
 
         #login-form { 
             display: flex; flex-direction: column; align-items: center; 
-            margin-top: 250px; /* Space for the logo above */
+            margin-top: 250px; 
         }
 
         #overlay select, #overlay button { 
             padding: 15px; font-size: 18px; border-radius: 8px; width: 320px; 
             margin: 10px; border: 1px solid var(--line-color); background: #111; color: white; 
-            position: relative; z-index: 2000; 
+            position: relative; z-index: 2000;
         }
         #overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
 
         #app { display: none; height: 100vh; width: 100%; justify-content: center; }
         #workspace { width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
 
-        /* HEADER LINE */
-        #chat-line-top { position: absolute; width: 1000px; height: 1px; background: var(--line-color); left: 200px; top: 20px; }
+        /* STATIC LINES - NO HOVER EFFECTS */
+        #chat-line-top { position: absolute; width: 1000px; height: 1px; background: var(--line-color); left: 200px; top: 20px; pointer-events: none; }
 
         /* LOGGED IN STATUS - TOP RIGHT */
         #status-display { 
@@ -60,9 +63,9 @@
         }
 
         #logo-wrap { margin-top: 50px; margin-bottom: 15px; z-index: 10; }
-        #main-logo { height: 85px; width: auto; }
+        #main-logo { height: 85px; width: auto; pointer-events: none; }
 
-        .chat-line-v { position: absolute; width: 1px; height: 350px; background: var(--line-color); top: 230px; }
+        .chat-line-v { position: absolute; width: 1px; height: 350px; background: var(--line-color); top: 230px; pointer-events: none; }
         #chat-line-left { left: 50px; }   
         #chat-line-right { right: 50px; } 
 
@@ -71,7 +74,9 @@
             margin: 20px 0; padding: 20px 0;
             overflow-y: auto; display: flex; flex-direction: column; gap: 25px;
             z-index: 5;
+            scrollbar-width: none; /* Hides scrollbar in Firefox */
         }
+        #chat-window::-webkit-scrollbar { display: none; } /* Hides scrollbar in Chrome/Safari */
 
         /* MESSAGE ALIGNMENT */
         .msg-row { display: flex !important; width: 100% !important; padding: 0 !important; }
@@ -90,6 +95,7 @@
         .lang-top { padding: 12px 18px; font-weight: bold; }
         .lang-bottom { padding: 10px 18px; font-size: 16px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
+        /* INPUT BOX - NO HOVER/FOCUS OUTLINE */
         #input-area-wrap { width: 1200px; position: relative; margin-top: 10px; }
         #input-box { width: 100%; height: 45px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; }
         .input-icons { display: flex; gap: 15px; font-size: 18px; color: var(--line-color); margin-right: 15px; }
@@ -160,7 +166,6 @@
 
         document.getElementById('login-btn').onclick = () => {
             activeUser = document.getElementById('user-select').value;
-            // SET THE NAME
             document.getElementById('status-display').innerText = "LOGGED IN AS: " + activeUser;
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('app').style.display = 'flex';
