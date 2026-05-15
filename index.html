@@ -22,6 +22,7 @@
             color: white; font-family: sans-serif; overflow: hidden; 
         }
 
+        /* 10px SCREEN BORDER - Locked for all sizes */
         #screen-border {
             position: fixed;
             top: 10px; left: 10px; right: 10px; bottom: 10px;
@@ -32,78 +33,119 @@
 
         *:focus { outline: none !important; }
 
+        /* RESPONSIVE OVERLAY */
         #overlay { 
             position: fixed; inset: 0; background: #000; z-index: 1000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
         }
         
         #overlay-logo-container {
-            position: absolute; top: 150px; width: 100%; display: flex; justify-content: center;
-            pointer-events: none;
+            width: 100%; display: flex; justify-content: center;
+            pointer-events: none; margin-bottom: 20px;
         }
-        #overlay-logo { width: 256px; height: 256px; object-fit: contain; }
+        #overlay-logo { width: 100%; max-width: 256px; height: auto; object-fit: contain; }
 
-        #login-form { display: flex; flex-direction: column; align-items: center; margin-top: 250px; }
+        #login-form { display: flex; flex-direction: column; align-items: center; width: 100%; }
 
         #overlay select, #overlay button { 
-            padding: 15px; font-size: 18px; border-radius: 8px; width: 320px; 
+            padding: 15px; font-size: 18px; border-radius: 8px; 
+            width: 100%; max-width: 320px; 
             margin: 10px; border: 1px solid var(--line-color); background: #111; color: white; 
             position: relative; z-index: 2000;
         }
         #overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
 
         #app { display: none; height: 100vh; width: 100%; justify-content: center; }
-        #workspace { width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        
+        /* FLUID WORKSPACE */
+        #workspace { 
+            width: 100%; max-width: 1400px; 
+            display: flex; flex-direction: column; align-items: center; position: relative; 
+        }
 
-        #chat-line-top { position: absolute; width: 1000px; height: 1px; background: var(--line-color); left: 200px; top: 20px; pointer-events: none; }
-
+        /* STATUS DISPLAY - Adaptive Position */
         #status-display { 
             position: absolute; top: 40px; right: 40px;
-            color: var(--line-color); font-size: 14px; font-weight: bold; 
+            color: var(--line-color); font-size: 12px; font-weight: bold; 
             text-transform: uppercase; letter-spacing: 2px; z-index: 20;
         }
 
         #logo-wrap { margin-top: 50px; margin-bottom: 15px; z-index: 10; }
-        #main-logo { height: 85px; width: auto; pointer-events: none; }
+        #main-logo { height: 60px; width: auto; pointer-events: none; }
 
-        .chat-line-v { position: absolute; width: 1px; height: 350px; background: var(--line-color); top: 230px; pointer-events: none; }
-        #chat-line-left { left: 50px; }   
-        #chat-line-right { right: 50px; } 
-
+        /* FLUID CHAT WINDOW */
         #chat-window { 
-            width: 1220px; height: 430px; 
-            margin: 20px 0; padding: 20px 0;
-            overflow-y: auto; display: flex; flex-direction: column; gap: 25px;
-            z-index: 5;
-            scrollbar-width: none;
+            width: 92%; max-width: 1220px; height: 50vh; 
+            margin: 10px 0; padding: 20px 0;
+            overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
+            z-index: 5; scrollbar-width: none;
         }
         #chat-window::-webkit-scrollbar { display: none; }
 
+        /* MESSAGE ALIGNMENT */
         .msg-row { display: flex !important; width: 100% !important; padding: 0 !important; }
         .msg-row.self { justify-content: flex-end !important; }
         .msg-row.self .msg-content-wrapper { flex-direction: row-reverse; }
-        .msg-row.self .avatar { margin-left: 15px; }
+        .msg-row.self .avatar { margin-left: 10px; }
         .msg-row.other { justify-content: flex-start !important; }
-        .msg-row.other .avatar { margin-right: 15px; }
-        .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 80%; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--line-color); flex-shrink: 0; object-fit: cover; }
+        .msg-row.other .avatar { margin-right: 10px; }
+        
+        .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 85%; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-color); flex-shrink: 0; object-fit: cover; }
 
-        .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 18px; }
+        .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; }
         .bubble.Sarti { background: var(--sarti); }
         .bubble.Elize { background: var(--elize); }
         .bubble.Jaz { background: var(--jaz); }
-        .lang-top { padding: 12px 18px; font-weight: bold; }
-        .lang-bottom { padding: 10px 18px; font-size: 16px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
+        .lang-top { padding: 10px 15px; font-weight: bold; }
+        .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        #input-area-wrap { width: 1200px; position: relative; margin-top: 5px; }
-        #input-box { width: 100%; height: 45px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; }
-        .input-icons { display: flex; gap: 15px; font-size: 18px; color: var(--line-color); margin-right: 15px; }
+        /* FLUID INPUT AREA */
+        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; }
+        #input-box { 
+            width: 100%; height: 50px; border: 1px solid var(--line-color); 
+            display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; 
+            background: rgba(0,0,0,0.6);
+        }
+        .input-icons { display: flex; gap: 12px; font-size: 18px; color: var(--line-color); margin-right: 12px; }
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
         #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; }
 
-        #avatar-footer { width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
-        .placeholder-circle { width: 90px; height: 90px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        /* FLUID AVATAR FOOTER */
+        #avatar-footer { 
+            width: 95%; max-width: 800px; 
+            margin-top: 15px; margin-bottom: 30px; 
+            display: flex; justify-content: space-around; align-items: center; 
+        }
+        .placeholder-circle { 
+            width: 70px; height: 70px; border-radius: 50%; 
+            border: 1px solid var(--line-color); background: #000; 
+            display: flex; justify-content: center; align-items: center; overflow: hidden; 
+        }
         .placeholder-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ----------------------------------------------------------- */
+        /* MOBILE RESPONSIVE MEDIA QUERIES */
+        /* ----------------------------------------------------------- */
+        
+        /* Hide decorative absolute lines on smaller screens */
+        @media (max-width: 1100px) {
+            .chat-line-v, #chat-line-top { display: none; }
+            #status-display { right: 20px; top: 20px; }
+            #logo-wrap { margin-top: 30px; }
+            #main-logo { height: 45px; }
+        }
+
+        /* Adjustments for phones */
+        @media (max-width: 600px) {
+            #chat-window { height: 55vh; gap: 15px; }
+            .placeholder-circle { width: 60px; height: 60px; }
+            .avatar { width: 35px; height: 35px; }
+            .bubble { font-size: 14px; }
+            .lang-bottom { font-size: 12px; }
+            #status-display { font-size: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -127,13 +169,17 @@
     <div id="app">
         <div id="workspace">
             <div id="chat-line-top"></div>
+            <div id="chat-line-left" class="chat-line-v"></div>
+            <div id="chat-line-right" class="chat-line-v"></div>
+            
             <div id="status-display">LOGGED IN AS: ---</div>
+
             <div id="logo-wrap">
                 <img id="main-logo" src="wethreelove.png">
             </div>
-            <div id="chat-line-left" class="chat-line-v"></div>
-            <div id="chat-line-right" class="chat-line-v"></div>
+
             <div id="chat-window"></div>
+
             <div id="input-area-wrap">
                 <div id="input-box">
                     <div class="input-icons">
@@ -144,6 +190,7 @@
                     <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
+
             <div id="avatar-footer">
                 <div class="placeholder-circle"><img src="Elize.png"></div>
                 <div class="placeholder-circle"><img src="Sarti.png"></div>
@@ -168,15 +215,13 @@
             startSync();
         };
 
-        // NEW: Optimized Draw function. Renders original text immediately, then translates in background.
         function draw(msg) {
             const isSelf = msg.sender === activeUser;
             const win = document.getElementById('chat-window');
             const row = document.createElement('div');
-            const msgId = `msg-${Date.now()}-${Math.random()}`; // Unique ID to find and update this bubble later
+            const msgId = `msg-${Date.now()}-${Math.random()}`; 
             row.className = `msg-row ${isSelf ? 'self' : 'other'}`;
             
-            // Render original text immediately in both slots
             row.innerHTML = `
                 <div class="msg-content-wrapper">
                     <img src="${avatars[msg.sender]}" class="avatar">
@@ -189,7 +234,6 @@
             win.appendChild(row);
             win.scrollTop = win.scrollHeight;
 
-            // Handle translation asynchronously without blocking UI
             if (!isSelf) {
                 const langPair = (activeUser === 'Sarti') ? 'zh|en' : 'en|zh';
                 fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=${langPair}`)
@@ -216,20 +260,14 @@
         document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
 
         async function startSync() {
-            // Load messages from Supabase (Limit to last 50 for speed)
             const { data } = await _client.from('messages')
                 .select('*')
                 .order('created_at', { ascending: true })
                 .limit(50); 
             
             document.getElementById('chat-window').innerHTML = "";
+            if (data) { data.forEach(m => draw(m)); }
             
-            if (data) { 
-                // Draw all existing messages immediately
-                data.forEach(m => draw(m)); 
-            }
-            
-            // Subscribe to real-time updates
             _client.channel('chat')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => draw(p.new))
                 .subscribe();
