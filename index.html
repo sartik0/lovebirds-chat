@@ -91,7 +91,15 @@
         .msg-row.other { justify-content: flex-start !important; }
         .msg-row.other .avatar { margin-right: 10px; }
         
-        .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 85%; }
+        /* THE CONVERSATION BOXES */
+        .msg-content-wrapper { 
+            display: flex; 
+            align-items: flex-start; 
+            max-width: 85%; 
+            border: 1px solid var(--line-color); /* Added Border Box */
+            padding: 12px; 
+            border-radius: 18px; 
+        }
         .avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-color); flex-shrink: 0; object-fit: cover; }
 
         .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; }
@@ -140,6 +148,7 @@
         /* Adjustments for phones */
         @media (max-width: 600px) {
             #chat-window { height: 55vh; gap: 15px; }
+            .msg-content-wrapper { max-width: 100%; width: 100%; } /* Stack vertically by filling width */
             .placeholder-circle { width: 60px; height: 60px; }
             .avatar { width: 35px; height: 35px; }
             .bubble { font-size: 14px; }
