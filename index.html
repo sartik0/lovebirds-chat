@@ -300,8 +300,8 @@
             startSync();
         };
 
-        // Enable hitting Enter on the dropdown selector to submit the form
-        document.getElementById('user-select').onkeydown = (e) => {
+        // Enable hitting Enter on the dropdown selector or anywhere inside the login view overlay to submit
+        document.getElementById('overlay').onkeydown = (e) => {
             if (e.key === 'Enter') document.getElementById('login-btn').click();
         };
 
