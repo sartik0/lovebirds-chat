@@ -9,8 +9,7 @@
     <style>
         :root { 
             --sarti: rgb(52, 137, 255); 
-            --elize: rgb(252, 200, 77); 
-            --jaz: rgb(249, 114, 217); 
+            --selena: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
         }
 
@@ -32,20 +31,28 @@
 
         *:focus { outline: none !important; }
 
-        #overlay { 
-            position: fixed; inset: 0; background: #000; z-index: 1000; 
+        /* SECURITY PASSWORD MODAL GATEWAY */
+        #gate-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 5000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
         }
-        
-        #overlay-logo-container {
-            width: 100%; display: flex; justify-content: center;
-            pointer-events: none; margin-bottom: 20px;
+        #gate-overlay input, #gate-overlay button {
+            padding: 15px; font-size: 18px; border-radius: 8px; width: 100%; max-width: 320px; 
+            margin: 10px; border: 1px solid var(--line-color); background: #111; color: white;
         }
+        #gate-overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
+        #gate-error { color: #ff5555; font-size: 14px; margin-top: 5px; height: 20px; font-weight: bold; }
+
+        /* RESPONSIVE LOGIN OVERLAY */
+        #overlay { 
+            position: fixed; inset: 0; background: #000; z-index: 1000; 
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        #overlay-logo-container { width: 100%; display: flex; justify-content: center; pointer-events: none; margin-bottom: 20px; }
         #overlay-logo { width: 100%; max-width: 256px; height: auto; object-fit: contain; }
-
         #login-form { display: flex; flex-direction: column; align-items: center; width: 100%; }
-
         #overlay select, #overlay button { 
             padding: 15px; font-size: 18px; border-radius: 8px; width: 100%; max-width: 320px; 
             margin: 10px; border: 1px solid var(--line-color); background: #111; color: white; 
@@ -65,36 +72,27 @@
         #logo-wrap { margin-top: 50px; margin-bottom: 15px; z-index: 10; }
         #main-logo { height: 60px; width: auto; pointer-events: none; }
 
-        /* THE CHAT WINDOW */
         #chat-window { 
             width: 92%; max-width: 1220px; height: 50vh; 
             margin: 10px 0; padding: 20px 0;
             overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
-            z-index: 5; scrollbar-width: none;
-            position: relative;
+            z-index: 5; scrollbar-width: none; position: relative;
         }
         #chat-window::-webkit-scrollbar { display: none; }
 
         /* DESKTOP VERTICAL LINE */
         #chat-window::before {
-            content: "";
-            position: absolute; left: 50%; top: 0; bottom: 0;
-            width: 1px; background: var(--line-color);
-            z-index: -1;
+            content: ""; position: absolute; left: 50%; top: 0; bottom: 0;
+            width: 1px; background: var(--line-color); z-index: -1;
         }
 
-        /* MOBILE HORIZONTAL LINE (Hidden on Desktop) */
+        /* MOBILE HORIZONTAL LINE */
         #mobile-divider { 
-            display: none; 
-            width: 100%; height: 1px; 
-            background: var(--line-color); 
-            margin: 10px 0;
-            order: 2; /* Sandwiches between group 1 and group 3 */
+            display: none; width: 100%; height: 1px; 
+            background: var(--line-color); margin: 10px 0; order: 2;
         }
 
         .msg-row { display: flex !important; width: 100% !important; padding: 0 !important; }
-        
-        /* TWO COLUMN LOGIC (DESKTOP) */
         .msg-row.other { justify-content: flex-start !important; width: 50% !important; align-self: flex-start; order: 3; }
         .msg-row.self { justify-content: flex-end !important; width: 50% !important; align-self: flex-end; order: 1; }
         
@@ -105,16 +103,30 @@
         .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 90%; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-color); flex-shrink: 0; object-fit: cover; }
 
-        .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; }
+        .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; word-break: break-word; }
         .bubble.Sarti { background: var(--sarti); }
-        .bubble.Elize { background: var(--elize); }
-        .bubble.Jaz { background: var(--jaz); }
+        .bubble.Selena { background: var(--selena); }
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; }
+        /* INLINE COMPONENT MEDIA PANEL */
+        #rich-asset-panel {
+            display: none; width: 100%; background: #111; border: 1px solid var(--line-color);
+            border-bottom: none; box-sizing: border-box; flex-direction: column;
+        }
+        .panel-tabs { display: flex; background: #1a1a1a; border-bottom: 1px solid var(--line-color); }
+        .panel-tab-btn { flex: 1; padding: 10px; text-align: center; background: transparent; border: none; color: white; cursor: pointer; font-size: 14px; font-weight: bold; }
+        .panel-tab-btn.active { background: #000; color: var(--line-color); }
+        .panel-content-view { display: none; padding: 15px; max-height: 160px; overflow-y: auto; gap: 10px; flex-wrap: wrap; }
+        .panel-content-view.active { display: flex; }
+        .picker-emoji-item { font-size: 24px; cursor: pointer; user-select: none; }
+        .picker-media-item { width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 1px solid transparent; }
+        .picker-media-item:hover { border-color: var(--line-color); }
+
+        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
         .input-icons { display: flex; gap: 12px; font-size: 18px; color: var(--line-color); margin-right: 12px; }
+        .input-icons i { cursor: pointer; }
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
         #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; }
 
@@ -122,16 +134,13 @@
         .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .placeholder-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* MOBILE RESPONSIVE MEDIA QUERIES */
+        .rich-rendered-media { max-width: 280px; max-height: 200px; display: block; border-radius: 8px; margin: 8px; object-fit: contain; }
+        .rich-rendered-file { display: inline-flex; align-items: center; gap: 10px; padding: 12px; color: #000; font-weight: bold; text-decoration: none; }
+
         @media (max-width: 800px) {
-            #chat-window::before { display: none; } /* Hide vertical line */
-            #mobile-divider { display: block; }    /* Show horizontal line */
-            
-            .msg-row.other, .msg-row.self { 
-                width: 100% !important; 
-                align-self: center; 
-            }
-            
+            #chat-window::before { display: none; }
+            #mobile-divider { display: block; }    
+            .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             #chat-window { height: 55vh; }
             .placeholder-circle { width: 60px; height: 60px; }
             #status-display { right: 20px; top: 20px; font-size: 10px; }
@@ -143,15 +152,21 @@
 
     <div id="screen-border"></div>
 
+    <div id="gate-overlay">
+        <h2 style="letter-spacing: 2px; font-weight: 300; margin-bottom: 20px;">SECURITY ACCESS</h2>
+        <input type="password" id="gate-password" placeholder="Enter System Key...">
+        <button id="gate-submit-btn">VALIDATE AUTH</button>
+        <div id="gate-error"></div>
+    </div>
+
     <div id="overlay">
         <div id="overlay-logo-container">
             <img id="overlay-logo" src="wethreelove.png">
         </div>
         <div id="login-form">
             <select id="user-select">
+                <option value="Selena">Selena</option>
                 <option value="Sarti">Sarti</option>
-                <option value="Elize">Elize</option>
-                <option value="Jaz">Jaz</option>
             </select>
             <button id="login-btn">ENTER CHAT</button>
         </div>
@@ -169,19 +184,32 @@
             </div>
 
             <div id="input-area-wrap">
+                <div id="rich-asset-panel">
+                    <div class="panel-tabs">
+                        <button class="panel-tab-btn active" onclick="switchAssetTab('tab-emojis')">EMOJIS</button>
+                        <button class="panel-tab-btn" onclick="switchAssetTab('tab-gifs')">GIFS</button>
+                        <button class="panel-tab-btn" onclick="switchAssetTab('tab-stickers')">STICKERS</button>
+                    </div>
+                    <div id="tab-emojis" class="panel-content-view active"></div>
+                    <div id="tab-gifs" class="panel-content-view"></div>
+                    <div id="tab-stickers" class="panel-content-view"></div>
+                </div>
+
                 <div id="input-box">
                     <div class="input-icons">
-                        <i class="fa-regular fa-face-smile"></i>
-                        <i class="fa-solid fa-paperclip"></i>
+                        <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
+                        <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
                     </div>
                     <input type="text" id="msg-input" placeholder="Type Message...">
                     <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
+
+            <input type="file" id="hidden-file-element" style="display: none;">
+
             <div id="avatar-footer">
-                <div class="placeholder-circle"><img src="Elize.png"></div>
+                <div class="placeholder-circle"><img src="Selena.png"></div>
                 <div class="placeholder-circle"><img src="Sarti.png"></div>
-                <div class="placeholder-circle"><img src="Jaz.png"></div>
             </div>
         </div>
     </div>
@@ -192,7 +220,32 @@
         const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
 
         let activeUser = ""; 
-        const avatars = { 'Sarti': 'Sarti.png', 'Elize': 'Elize.png', 'Jaz': 'Jaz.png' };
+        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
+
+        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
+        const SYSTEM_SECURE_TOKEN = "58a2362cde8f3f19d0e6cc38b5f60bb12f9028b4b701addde22140b5f78e4b1c";
+
+        async function verifyPassphrase(input) {
+            const encodedText = new TextEncoder().encode(input);
+            const digestBuffer = await crypto.subtle.digest('SHA-256', encodedText);
+            const hexResult = Array.from(new Uint8Array(digestBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            return hexResult === SYSTEM_SECURE_TOKEN;
+        }
+
+        document.getElementById('gate-submit-btn').onclick = async () => {
+            const secretInput = document.getElementById('gate-password').value;
+            const authenticated = await verifyPassphrase(secretInput);
+            if (authenticated) {
+                document.getElementById('gate-overlay').style.display = 'none';
+                document.getElementById('overlay').style.display = 'flex';
+            } else {
+                document.getElementById('gate-error').innerText = "INVALID ACCESS KEY PROFILE";
+            }
+        };
+
+        document.getElementById('gate-password').onkeydown = (e) => {
+            if (e.key === 'Enter') document.getElementById('gate-submit-btn').click();
+        };
 
         document.getElementById('login-btn').onclick = () => {
             activeUser = document.getElementById('user-select').value;
@@ -202,6 +255,65 @@
             startSync();
         };
 
+        // INTEGRATED LOCAL ASSET MATRIX DATA
+        const emojiPool = ["❤️", "💖", "✨", "😊", "🥰", "😘", "😍", "🕊️", "🌹", "👑", "🐾", "🎈"];
+        const gifPool = ["https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWdtcmN0Z3I3dDNidXo3Y2p4NDYwd3dmbXo3bWp4M3BvNmRtYzh0ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4pTdcifPZaQqfV6M/giphy.gif", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXN6emMxM3J4eWw0NXBjd3M3bWV5YmtmaTF0NXZnY3N0NjZ6N2k3YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26hpv6M4Kx36690Xa/giphy.gif"];
+        const stickerPool = ["https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FwMHoxdzRkbzdzNXcybHZtdDNuYTZhNTd3YjNkcWwwM3N0a3pjeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Xg9qf68b8s7x6/giphy.gif"];
+
+        function loadAssetContainers() {
+            const eContainer = document.getElementById('tab-emojis');
+            emojiPool.forEach(emoji => {
+                const el = document.createElement('span'); el.className = 'picker-emoji-item'; el.innerText = emoji;
+                el.onclick = () => { document.getElementById('msg-input').value += emoji; };
+                eContainer.appendChild(el);
+            });
+            const gContainer = document.getElementById('tab-gifs');
+            gifPool.forEach(url => {
+                const img = document.createElement('img'); img.className = 'picker-media-item'; img.src = url;
+                img.onclick = () => { directPostMedia(url); }; gContainer.appendChild(img);
+            });
+            const sContainer = document.getElementById('tab-stickers');
+            stickerPool.forEach(url => {
+                const img = document.createElement('img'); img.className = 'picker-media-item'; img.src = url;
+                img.onclick = () => { directPostMedia(url); }; sContainer.appendChild(img);
+            });
+        }
+        loadAssetContainers();
+
+        document.getElementById('toggle-emoji-btn').onclick = () => {
+            const p = document.getElementById('rich-asset-panel');
+            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
+        };
+
+        function switchAssetTab(tabId) {
+            document.querySelectorAll('.panel-tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
+            });
+            document.querySelectorAll('.panel-content-view').forEach(view => {
+                view.classList.toggle('active', view.id === tabId);
+            });
+        }
+
+        document.getElementById('trigger-file-btn').onclick = () => {
+            document.getElementById('hidden-file-element').click();
+        };
+
+        document.getElementById('hidden-file-element').onchange = (e) => {
+            const pickedFile = e.target.files[0];
+            if (!pickedFile) return;
+            const fileReader = new FileReader();
+            fileReader.onload = async (event) => {
+                const base64DataPayload = event.target.result;
+                await _client.from('messages').insert([{ sender: activeUser, content: `BASE64_STREAM||${pickedFile.name}||${base64DataPayload}` }]);
+            };
+            fileReader.readAsDataURL(pickedFile);
+        };
+
+        async function directPostMedia(url) {
+            await _client.from('messages').insert([{ sender: activeUser, content: `EXTERNAL_URL_MEDIA||${url}` }]);
+            document.getElementById('rich-asset-panel').style.display = 'none';
+        }
+
         function draw(msg) {
             const isSelf = msg.sender === activeUser;
             const win = document.getElementById('chat-window');
@@ -209,29 +321,52 @@
             const msgId = `msg-${Date.now()}-${Math.random()}`; 
             row.className = `msg-row ${isSelf ? 'self' : 'other'}`;
             
+            let renderingBlock = "";
+            
+            if (msg.content.startsWith("BASE64_STREAM||")) {
+                const details = msg.content.split("||");
+                const fileName = details[1];
+                const rawData = details[2];
+                if (rawData.startsWith("data:image/") || rawData.startsWith("data:video/")) {
+                    renderingBlock = rawData.startsWith("data:image/") ? 
+                        `<img src="${rawData}" class="rich-rendered-media">` : 
+                        `<video src="${rawData}" controls class="rich-rendered-media"></video>`;
+                } else {
+                    renderingBlock = `<div class="lang-top"><a href="${rawData}" download="${fileName}" class="rich-rendered-file"><i class="fa-solid fa-file-arrow-down"></i> ${fileName}</a></div>`;
+                }
+            } else if (msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
+                const srcUrl = msg.content.split("||")[1];
+                renderingBlock = `<img src="${srcUrl}" class="rich-rendered-media">`;
+            } else {
+                renderingBlock = `
+                    <div class="lang-top" id="${msgId}-translated">${msg.content}</div>
+                    <div class="lang-bottom">${msg.content}</div>
+                `;
+            }
+            
             row.innerHTML = `
                 <div class="msg-content-wrapper">
-                    <img src="${avatars[msg.sender]}" class="avatar">
+                    <img src="${avatars[msg.sender] || 'Sarti.png'}" class="avatar">
                     <div class="bubble ${msg.sender}">
-                        <div class="lang-top" id="${msgId}-translated">${msg.content}</div>
-                        <div class="lang-bottom">${msg.content}</div>
+                        ${renderingBlock}
                     </div>
                 </div>
             `;
             win.appendChild(row);
             win.scrollTop = win.scrollHeight;
 
-            if (!isSelf) {
+            if (!isSelf && !msg.content.startsWith("BASE64_STREAM||") && !msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
                 const langPair = (activeUser === 'Sarti') ? 'zh|en' : 'en|zh';
                 fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=${langPair}`)
                     .then(res => res.json())
                     .then(json => {
                         const trans = json.responseData.translatedText;
                         if (trans && trans !== "null") {
-                            document.getElementById(`${msgId}-translated`).innerText = trans;
+                            const node = document.getElementById(`${msgId}-translated`);
+                            if (node) node.innerText = trans;
                         }
                     })
-                    .catch(e => console.error("Translation error", e));
+                    .catch(e => console.error("Translation Engine Exception", e));
             }
         }
 
@@ -248,13 +383,13 @@
 
         async function startSync() {
             const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true }).limit(50); 
-            // Keep the divider, only clear the messages
             const divider = document.getElementById('mobile-divider');
             document.getElementById('chat-window').innerHTML = "";
             document.getElementById('chat-window').appendChild(divider);
-            
-            if (data) { data.forEach(m => draw(m)); }
-            _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => draw(p.new)).subscribe();
+            if (data) { data.filter(m => avatars[m.sender]).forEach(m => draw(m)); }
+            _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
+                if(avatars[p.new.sender]) draw(p.new);
+            }).subscribe();
         }
     </script>
 </body>
