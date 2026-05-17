@@ -11,6 +11,7 @@
             --sarti: rgb(52, 137, 255); 
             --selena: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
+            --cy: cyan;
         }
 
         body, html { 
@@ -109,19 +110,20 @@
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        /* INLINE COMPONENT MEDIA PANEL */
-        #rich-asset-panel {
-            display: none; width: 100%; background: #111; border: 1px solid var(--line-color);
-            border-bottom: none; box-sizing: border-box; flex-direction: column;
+        /* REUSED RICH THREE-TAB ASSET COMPONENT FROM GOOD.HTML */
+        .emoji-panel { 
+            display: none; position: absolute; width: 100%; max-width: 350px; 
+            background: #2a2a2a; border: 1px solid #444; border-radius: 12px; 
+            z-index: 4000; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.6); 
         }
-        .panel-tabs { display: flex; background: #1a1a1a; border-bottom: 1px solid var(--line-color); }
-        .panel-tab-btn { flex: 1; padding: 10px; text-align: center; background: transparent; border: none; color: white; cursor: pointer; font-size: 14px; font-weight: bold; }
-        .panel-tab-btn.active { background: #000; color: var(--line-color); }
-        .panel-content-view { display: none; padding: 15px; max-height: 160px; overflow-y: auto; gap: 10px; flex-wrap: wrap; }
-        .panel-content-view.active { display: flex; }
-        .picker-emoji-item { font-size: 24px; cursor: pointer; user-select: none; }
-        .picker-media-item { width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 1px solid transparent; }
-        .picker-media-item:hover { border-color: var(--line-color); }
+        .panel-content { max-height: 220px; overflow-y: auto; padding: 10px; min-height: 150px; background: #1a1a1a; }
+        .emoji-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; font-size: 24px; text-align: center; cursor: pointer; }
+        .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .media-grid img { width: 100%; border-radius: 6px; cursor: pointer; height: 100px; object-fit: cover; }
+        
+        .tab-bar { display: flex; background: #1e1e1e; border-top: 1px solid #444; }
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
 
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
@@ -184,15 +186,13 @@
             </div>
 
             <div id="input-area-wrap">
-                <div id="rich-asset-panel">
-                    <div class="panel-tabs">
-                        <button class="panel-tab-btn active" onclick="switchAssetTab('tab-emojis')">EMOJIS</button>
-                        <button class="panel-tab-btn" onclick="switchAssetTab('tab-gifs')">GIFS</button>
-                        <button class="panel-tab-btn" onclick="switchAssetTab('tab-stickers')">STICKERS</button>
+                <div id="emoji-panel" class="emoji-panel">
+                    <div id="panel-body" class="panel-content"></div>
+                    <div class="tab-bar">
+                        <button class="tab-btn active" onclick="switchTab('emoji')">😊</button>
+                        <button class="tab-btn" onclick="switchTab('gif')">GIF</button>
+                        <button class="tab-btn" onclick="switchTab('sticker')">STK</button>
                     </div>
-                    <div id="tab-emojis" class="panel-content-view active"></div>
-                    <div id="tab-gifs" class="panel-content-view"></div>
-                    <div id="tab-stickers" class="panel-content-view"></div>
                 </div>
 
                 <div id="input-box">
@@ -255,44 +255,66 @@
             startSync();
         };
 
-        // INTEGRATED LOCAL ASSET MATRIX DATA
-        const emojiPool = ["❤️", "💖", "✨", "😊", "🥰", "😘", "😍", "🕊️", "🌹", "👑", "🐾", "🎈"];
-        const gifPool = ["https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWdtcmN0Z3I3dDNidXo3Y2p4NDYwd3dmbXo3bWp4M3BvNmRtYzh0ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4pTdcifPZaQqfV6M/giphy.gif", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXN6emMxM3J4eWw0NXBjd3M3bWV5YmtmaTF0NXZnY3N0NjZ6N2k3YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26hpv6M4Kx36690Xa/giphy.gif"];
-        const stickerPool = ["https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FwMHoxdzRkbzdzNXcybHZtdDNuYTZhNTd3YjNkcWwwM3N0a3pjeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Xg9qf68b8s7x6/giphy.gif"];
+        // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
+        var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
+        var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
+        var cachedE = null;
 
-        function loadAssetContainers() {
-            const eContainer = document.getElementById('tab-emojis');
-            emojiPool.forEach(emoji => {
-                const el = document.createElement('span'); el.className = 'picker-emoji-item'; el.innerText = emoji;
-                el.onclick = () => { document.getElementById('msg-input').value += emoji; };
-                eContainer.appendChild(el);
-            });
-            const gContainer = document.getElementById('tab-gifs');
-            gifPool.forEach(url => {
-                const img = document.createElement('img'); img.className = 'picker-media-item'; img.src = url;
-                img.onclick = () => { directPostMedia(url); }; gContainer.appendChild(img);
-            });
-            const sContainer = document.getElementById('tab-stickers');
-            stickerPool.forEach(url => {
-                const img = document.createElement('img'); img.className = 'picker-media-item'; img.src = url;
-                img.onclick = () => { directPostMedia(url); }; sContainer.appendChild(img);
-            });
-        }
-        loadAssetContainers();
-
-        document.getElementById('toggle-emoji-btn').onclick = () => {
-            const p = document.getElementById('rich-asset-panel');
-            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
+        window.toggleEmojiPanel = function() {
+            var p = document.getElementById('emoji-panel'); if (!p) return;
+            var vis = (p.style.display === 'block');
+            if (vis) {
+                p.style.display = 'none';
+            } else {
+                p.style.display = 'block'; p.style.bottom = '100%'; p.style.marginBottom = '10px';
+                var rect = p.getBoundingClientRect(); 
+                if (rect.top < 0) { p.style.bottom = 'auto'; p.style.top = '100%'; p.style.marginTop = '10px'; p.style.marginBottom = '0px'; }
+                switchTab('emoji');
+            }
         };
 
-        function switchAssetTab(tabId) {
-            document.querySelectorAll('.panel-tab-btn').forEach((btn, idx) => {
-                btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
-            });
-            document.querySelectorAll('.panel-content-view').forEach(view => {
-                view.classList.toggle('active', view.id === tabId);
-            });
+        document.getElementById('toggle-emoji-btn').onclick = function() {
+            toggleEmojiPanel();
+        };
+
+        async function getEmojiData() {
+            if (cachedE) return cachedE;
+            var stored = localStorage.getItem('sarti_emojis_v3');
+            if (stored) { cachedE = JSON.parse(stored); return cachedE; }
+            try { 
+                var r = await fetch(E_URL); var data = await r.json(); cachedE = Object.keys(data); 
+                localStorage.setItem('sarti_emojis_v3', JSON.stringify(cachedE)); return cachedE; 
+            } catch (e) { 
+                return ["😀","😂","😍","👍","🙏","😎","🔥","✨","🤔","😊"]; 
+            }
         }
+
+        window.switchTab = async function(type) {
+            var body = document.getElementById('panel-body'), btns = document.querySelectorAll('#emoji-panel .tab-btn');
+            btns.forEach(function(b) { b.classList.remove('active'); }); body.innerHTML = "Loading...";
+            
+            if (type === 'emoji') {
+                btns[0].classList.add('active'); body.className = "panel-content emoji-grid";
+                var emojis = await getEmojiData(); body.innerHTML = "";
+                emojis.forEach(function(e) { 
+                    var s = document.createElement('span'); s.innerText = e; 
+                    s.onclick = function() { document.getElementById('msg-input').value += e; }; 
+                    body.appendChild(s); 
+                });
+            } else {
+                var idx = (type === 'gif' ? 1 : 2), ep = (type === 'gif' ? 'gifs' : 'stickers');
+                btns[idx].classList.add('active'); body.className = "panel-content media-grid";
+                try { 
+                    var r = await fetch('https://api.giphy.com/v1/' + ep + '/trending?api_key=' + G_KEY + '&limit=12&rating=g'); 
+                    var j = await r.json(); body.innerHTML = "";
+                    j.data.forEach(function(g) { 
+                        var i = document.createElement('img'); i.src = g.images.fixed_height_small.url; 
+                        i.onclick = function() { directPostMedia(g.images.fixed_height.url); toggleEmojiPanel(); }; 
+                        body.appendChild(i); 
+                    });
+                } catch (e) { body.innerHTML = "Giphy Error"; }
+            }
+        };
 
         document.getElementById('trigger-file-btn').onclick = () => {
             document.getElementById('hidden-file-element').click();
@@ -311,7 +333,7 @@
 
         async function directPostMedia(url) {
             await _client.from('messages').insert([{ sender: activeUser, content: `EXTERNAL_URL_MEDIA||${url}` }]);
-            document.getElementById('rich-asset-panel').style.display = 'none';
+            document.getElementById('emoji-panel').style.display = 'none';
         }
 
         function draw(msg) {
@@ -380,6 +402,13 @@
 
         document.getElementById('send-btn').onclick = send;
         document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
+
+        document.addEventListener('mousedown', function(e) {
+            if (!e.target.closest('#emoji-panel') && !e.target.closest('#toggle-emoji-btn')) {
+                var p = document.getElementById('emoji-panel');
+                if (p) p.style.display = 'none';
+            }
+        });
 
         async function startSync() {
             const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true }).limit(50); 
