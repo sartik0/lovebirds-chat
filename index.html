@@ -274,7 +274,6 @@
             return hexResult === SYSTEM_SECURE_TOKEN;
         }
 
-        // Dedicated isolation routine for password verification
         async function handleGateSubmit() {
             const secretInput = document.getElementById('gate-password').value;
             const authenticated = await verifyPassphrase(secretInput);
@@ -288,13 +287,6 @@
 
         document.getElementById('gate-submit-btn').onclick = handleGateSubmit;
 
-        document.getElementById('gate-password').onkeydown = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleGateSubmit();
-            }
-        };
-
         document.getElementById('login-btn').onclick = () => {
             activeUser = document.getElementById('user-select').value;
             document.getElementById('status-display').innerText = "LOGGED IN AS: " + activeUser;
@@ -303,13 +295,21 @@
             startSync();
         };
 
-        // Enable hitting Enter anywhere inside the selector view overlay to submit
-        document.getElementById('overlay').onkeydown = (e) => {
+        // GLOBAL KEY ROUTER: Guarantees overlay screen Enter clicks trigger perfectly no matter what element is focused
+        window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('login-btn').click();
+                const gate = document.getElementById('gate-overlay');
+                const overlay = document.getElementById('overlay');
+                
+                if (gate && window.getComputedStyle(gate).display !== 'none') {
+                    e.preventDefault();
+                    handleGateSubmit();
+                } else if (overlay && overlay.style.display === 'flex') {
+                    e.preventDefault();
+                    document.getElementById('login-btn').click();
+                }
             }
-        };
+        });
 
         // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
         var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
@@ -392,7 +392,6 @@
             document.getElementById('emoji-panel').style.display = 'none';
         }
 
-        /* DATA LOG SYNC RENDER ENGINE */
         function draw(msg) {
             const isSelf = msg.sender === activeUser;
             const win = document.getElementById('chat-window');
