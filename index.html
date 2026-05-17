@@ -70,7 +70,7 @@
             text-transform: uppercase; letter-spacing: 2px; z-index: 20;
         }
 
-        /* ALERT SWITCHES PLATFORM CONSOLE - Updated alignment to align checkboxes horizontally */
+        /* ALERT SWITCHES PLATFORM CONSOLE */
         #controls-display {
             position: absolute; top: 65px; right: 40px;
             display: flex; flex-direction: column; gap: 8px;
@@ -145,9 +145,6 @@
         #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
         .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .placeholder-circle img { width: 100%; height: 100%; object-fit: cover; }
-
-        .rich-rendered-media { max-width: 280px; max-height: 200px; display: block; border-radius: 8px; margin: 8px; object-fit: contain; }
-        .rich-rendered-file { display: inline-flex; align-items: center; gap: 10px; padding: 12px; color: #000; font-weight: bold; text-decoration: none; }
 
         /* CUSTOM NOTIFICATION MODAL SYSTEM */
         #msg-alert-modal { 
@@ -277,7 +274,8 @@
             return hexResult === SYSTEM_SECURE_TOKEN;
         }
 
-        document.getElementById('gate-submit-btn').onclick = async () => {
+        // Dedicated isolation routine for password verification
+        async function handleGateSubmit() {
             const secretInput = document.getElementById('gate-password').value;
             const authenticated = await verifyPassphrase(secretInput);
             if (authenticated) {
@@ -286,10 +284,15 @@
             } else {
                 document.getElementById('gate-error').innerText = "Incorrect Password";
             }
-        };
+        }
+
+        document.getElementById('gate-submit-btn').onclick = handleGateSubmit;
 
         document.getElementById('gate-password').onkeydown = (e) => {
-            if (e.key === 'Enter') document.getElementById('gate-submit-btn').click();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleGateSubmit();
+            }
         };
 
         document.getElementById('login-btn').onclick = () => {
@@ -300,9 +303,12 @@
             startSync();
         };
 
-        // Enable hitting Enter on the dropdown selector or anywhere inside the login view overlay to submit
+        // Enable hitting Enter anywhere inside the selector view overlay to submit
         document.getElementById('overlay').onkeydown = (e) => {
-            if (e.key === 'Enter') document.getElementById('login-btn').click();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('login-btn').click();
+            }
         };
 
         // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
@@ -386,6 +392,7 @@
             document.getElementById('emoji-panel').style.display = 'none';
         }
 
+        /* DATA LOG SYNC RENDER ENGINE */
         function draw(msg) {
             const isSelf = msg.sender === activeUser;
             const win = document.getElementById('chat-window');
