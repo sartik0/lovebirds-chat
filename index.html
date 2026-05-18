@@ -135,20 +135,39 @@
         .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
         .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
 
-        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
-        #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
-        
-        /* FIXED STRUCTURAL LAYERING FOR HIGH-DPI SCALED MONITOR CLICKS */
+        /* DEEP LAYER SEPARATION ENHANCEMENTS FOR HIGH-DPI TRACKING */
+        #input-area-wrap { 
+            width: 92%; 
+            max-width: 1200px; 
+            position: relative; 
+            margin-top: 5px; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 100; /* Elevates control deck completely above chat history bleed bounds */
+        }
+        #input-box { 
+            width: 100%; 
+            height: 50px; 
+            border: 1px solid var(--line-color); 
+            display: flex; 
+            align-items: center; 
+            padding: 0 15px; 
+            box-sizing: border-box; 
+            background: rgba(0,0,0,0.6); 
+            position: relative;
+            z-index: 110;
+        }
         .input-icons { 
             display: flex; 
-            gap: 12px; 
+            gap: 16px; 
             font-size: 18px; 
             color: var(--line-color); 
             margin-right: 12px; 
             position: relative; 
-            z-index: 10; 
+            z-index: 130; 
+            pointer-events: auto; /* Forces touch screens to process target clicks directly */
         }
-        .input-icons i { cursor: pointer; }
+        .input-icons i { cursor: pointer; padding: 6px; } /* Expands physical tap footprint */
         #msg-input { 
             flex: 1; 
             background: transparent; 
@@ -157,6 +176,8 @@
             font-size: 16px; 
             outline: none; 
             min-width: 0; 
+            position: relative;
+            z-index: 120; /* Sets text engine container layer strictly behind control buttons */
         }
         #send-btn { 
             background: transparent; 
@@ -165,7 +186,12 @@
             font-size: 20px; 
             cursor: pointer; 
             position: relative; 
-            z-index: 10; 
+            z-index: 130; 
+            pointer-events: auto; /* Forces touch screens to process target clicks directly */
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
