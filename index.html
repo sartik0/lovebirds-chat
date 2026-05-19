@@ -9,7 +9,7 @@
     <style>
         :root { 
             --sarti: rgb(52, 137, 255); 
-            --selena: rgb(252, 200, 77); 
+            --doris: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
             --cy: cyan;
         }
@@ -116,7 +116,7 @@
 
         .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; word-break: break-word; }
         .bubble.Sarti { background: var(--sarti); }
-        .bubble.Selena { background: var(--selena); }
+        .bubble.Doris { background: var(--doris); }
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
@@ -138,14 +138,9 @@
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
         .input-icons { display: flex; gap: 12px; font-size: 18px; color: var(--line-color); margin-right: 12px; }
-        
-        /* FIX APPLIED: Icons securely elevated */
-        .input-icons i { cursor: pointer; position: relative; z-index: 2000; }
-        
+        .input-icons i { cursor: pointer; }
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
-        
-        /* FIX APPLIED: Send button securely elevated */
-        #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; position: relative; z-index: 2000; }
+        #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; }
 
         #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
         .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -183,7 +178,7 @@
     <div id="screen-border"></div>
 
     <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
-    <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
+    <audio id="audio-doris" src="doris_alert.mp4" preload="auto"></audio>
 
     <div id="msg-alert-modal">
         <div class="alert-modal-box">
@@ -205,7 +200,7 @@
         </div>
         <div id="login-form">
             <select id="user-select">
-                <option value="Selena">Selena</option>
+                <option value="Doris">Doris</option>
                 <option value="Sarti">Sarti</option>
             </select>
             <button id="login-btn">ENTER CHAT</button>
@@ -257,7 +252,7 @@
             <input type="file" id="hidden-file-element" style="display: none;">
 
             <div id="avatar-footer">
-                <div class="placeholder-circle"><img src="Selena.png"></div>
+                <div class="placeholder-circle"><img src="Doris.png"></div>
                 <div class="placeholder-circle"><img src="Sarti.png"></div>
             </div>
         </div>
@@ -270,7 +265,7 @@
 
         let activeUser = ""; 
         let syncReady = false;
-        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
+        const avatars = { 'Sarti': 'Sarti.png', 'Doris': 'Doris.png' };
 
         // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
         const SYSTEM_SECURE_TOKEN = "58a2362cde8f3f19d0e6cc38b5f60bb12f9028b4b701addde22140b5f78e4b1c";
