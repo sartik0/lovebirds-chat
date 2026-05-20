@@ -9,7 +9,7 @@
     <style>
         :root { 
             --sarti: rgb(52, 137, 255); 
-            --doris: rgb(252, 200, 77); 
+            --selena: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
             --cy: cyan;
         }
@@ -116,7 +116,7 @@
 
         .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; word-break: break-word; }
         .bubble.Sarti { background: var(--sarti); }
-        .bubble.Doris { background: var(--doris); }
+        .bubble.Selena { background: var(--selena); }
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
@@ -186,7 +186,7 @@
     <div id="screen-border"></div>
 
     <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
-    <audio id="audio-doris" src="doris_alert.mp4" preload="auto"></audio>
+    <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
 
     <div id="msg-alert-modal">
         <div class="alert-modal-box">
@@ -208,7 +208,7 @@
         </div>
         <div id="login-form">
             <select id="user-select">
-                <option value="Doris">Doris</option>
+                <option value="Selena">Selena</option>
                 <option value="Sarti">Sarti</option>
             </select>
             <button id="login-btn">ENTER CHAT</button>
@@ -260,7 +260,7 @@
             <input type="file" id="hidden-file-element" style="display: none;">
 
             <div id="avatar-footer">
-                <div class="placeholder-circle"><img src="Doris.png"></div>
+                <div class="placeholder-circle"><img src="Selena.png"></div>
                 <div class="placeholder-circle"><img src="Sarti.png"></div>
             </div>
         </div>
@@ -273,7 +273,7 @@
 
         let activeUser = ""; 
         let syncReady = false;
-        const avatars = { 'Sarti': 'Sarti.png', 'Doris': 'Doris.png' };
+        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
 
         // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
         const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
@@ -418,4 +418,95 @@
                 const rawData = details[2];
                 if (rawData.startsWith("data:image/") || rawData.startsWith("data:video/")) {
                     renderingBlock = rawData.startsWith("data:image/") ? 
-                        `<img src="${rawData}" class="rich-rendered-media">` :
+                        `<img src="${rawData}" class="rich-rendered-media">` : 
+                        `<video src="${rawData}" controls class="rich-rendered-media"></video>`;
+                } else {
+                    renderingBlock = `<div class="lang-top"><a href="${rawData}" download="${fileName}" class="rich-rendered-file"><i class="fa-solid fa-file-arrow-down"></i> ${fileName}</a></div>`;
+                }
+            } else if (msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
+                const srcUrl = msg.content.split("||")[1];
+                renderingBlock = `<img src="${srcUrl}" class="rich-rendered-media">`;
+            } else {
+                renderingBlock = `
+                    <div class="lang-top" id="${msgId}-translated">${msg.content}</div>
+                    <div class="lang-bottom">${msg.content}</div>
+                `;
+            }
+            
+            row.innerHTML = `
+                <div class="msg-content-wrapper">
+                    <img src="${avatars[msg.sender] || 'Sarti.png'}" class="avatar">
+                    <div class="bubble ${msg.sender}">
+                        ${renderingBlock}
+                    </div>
+                </div>
+            `;
+            win.appendChild(row);
+            win.scrollTop = win.scrollHeight;
+
+            if (!isSelf && !msg.content.startsWith("BASE64_STREAM||") && !msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
+                const langPair = (activeUser === 'Sarti') ? 'zh|en' : 'en|zh';
+                fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=${langPair}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        const trans = json.responseData.translatedText;
+                        if (trans && trans !== "null") {
+                            const node = document.getElementById(`${msgId}-translated`);
+                            if (node) node.innerText = trans;
+                        }
+                    })
+                    .catch(e => console.error("Translation Engine Exception", e));
+            }
+        }
+
+        async function send() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+            await _client.from('messages').insert([{ sender: activeUser, content: text }]);
+            input.value = "";
+        }
+
+        document.getElementById('send-btn').onclick = send;
+        document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
+
+        document.getElementById('msg-alert-close').onclick = () => {
+            document.getElementById('msg-alert-modal').style.display = 'none';
+        };
+
+        document.addEventListener('mousedown', function(e) {
+            if (!e.target.closest('#emoji-panel') && !e.target.closest('#toggle-emoji-btn')) {
+                var p = document.getElementById('emoji-panel');
+                if (p) p.style.display = 'none';
+            }
+        });
+
+        async function startSync() {
+            const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true }).limit(50); 
+            const divider = document.getElementById('mobile-divider');
+            document.getElementById('chat-window').innerHTML = "";
+            document.getElementById('chat-window').appendChild(divider);
+            if (data) { data.filter(m => avatars[m.sender]).forEach(m => draw(m)); }
+            
+            setTimeout(() => { syncReady = true; }, 1000);
+
+            _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
+                if(avatars[p.new.sender]) {
+                    draw(p.new);
+                    
+                    if (syncReady && p.new.sender !== activeUser) {
+                        if (document.getElementById('toggle-sound').checked) {
+                            const soundNode = document.getElementById('audio-' + p.new.sender.toLowerCase());
+                            if (soundNode) soundNode.play().catch(e => console.error("Audio block runtime protection:", e));
+                        }
+                        if (document.getElementById('toggle-modal').checked) {
+                            document.getElementById('msg-alert-text').innerText = "New message received from " + p.new.sender;
+                            document.getElementById('msg-alert-modal').style.display = 'flex';
+                        }
+                    }
+                }
+            }).subscribe();
+        }
+    </script>
+</body>
+</html>
