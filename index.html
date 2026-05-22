@@ -22,14 +22,6 @@
             color: white; font-family: sans-serif; overflow: hidden; 
         }
 
-        #screen-border {
-            position: fixed;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid var(--line-color);
-            pointer-events: none; 
-            z-index: 9999;
-        }
-
         *:focus { outline: none !important; }
 
         /* SECURITY PASSWORD MODAL GATEWAY */
@@ -191,8 +183,6 @@
     </style>
 </head>
 <body>
-
-    <div id="screen-border"></div>
 
     <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
     <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
