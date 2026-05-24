@@ -54,7 +54,21 @@
         #overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
 
         #app { display: none; height: 100vh; width: 100%; justify-content: center; }
-        #workspace { width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        
+        /* WORKSPACE CONTAINER WITH FLOATING SIDE LINES */
+        #workspace { 
+            width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
+        }
+
+        /* LEFT AND RIGHT DISCONNECTED BORDER LINES */
+        #workspace::before, #workspace::after {
+            content: ""; position: absolute;
+            top: 130px; /* Aligns roughly with start of chat window */
+            bottom: 60px; /* Aligns with bottom of input box (accounting for footer margin) */
+            width: 1px; background: var(--line-color); z-index: -1;
+        }
+        #workspace::before { left: 4%; }  /* Aligns with 92% width of chat elements */
+        #workspace::after { right: 4%; } /* Aligns with 92% width of chat elements */
 
         #status-display { 
             position: absolute; top: 40px; right: 40px;
@@ -155,10 +169,18 @@
         .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
 
         @media (max-width: 800px) {
-            #chat-window::before { display: none; }
+            /* Hide the decorative border lines on mobile to avoid clutter */
+            #workspace::before, #workspace::after, #chat-window::before { display: none; }
             #mobile-divider { display: block; }    
-            .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
+            
             #chat-window { height: 55vh; }
+            
+            /* STACKED RESPONSIVE DESIGN FOR MESSAGES */
+            .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
+            .msg-content-wrapper { flex-direction: column !important; align-items: center; max-width: 100%; width: 100%; gap: 8px; }
+            .msg-row.self .avatar, .msg-row.other .avatar { margin: 0; }
+            .bubble { width: 90%; max-width: 400px; text-align: center; }
+            
             .placeholder-circle { width: 60px; height: 60px; }
             #status-display { right: 20px; top: 20px; font-size: 10px; }
             #controls-display { right: 20px; top: 42px; font-size: 9px; gap: 4px; align-items: flex-start; }
