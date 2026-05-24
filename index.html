@@ -59,18 +59,15 @@
             width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
         }
 
-        #status-display { 
-            position: absolute; top: 40px; right: 40px;
-            color: var(--line-color); font-size: 12px; font-weight: bold; 
-            text-transform: uppercase; letter-spacing: 2px; z-index: 20;
+        /* SETTINGS PANEL (TOP RIGHT BOX) */
+        #settings-panel {
+            position: absolute; top: 40px; right: -250px; /* Positioned outside the main workspace */
+            width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
+            z-index: 20; color: white;
         }
-
-        #controls-display {
-            position: absolute; top: 65px; right: 40px;
-            display: flex; flex-direction: column; gap: 8px;
-            z-index: 20; font-size: 11px; color: var(--line-color);
-            align-items: flex-start;
-        }
+        #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
+        
         .switch-label { display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
         .switch-label input { accent-color: var(--line-color); cursor: pointer; margin: 0; }
 
@@ -126,7 +123,6 @@
         .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
         .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
 
-        /* INPUT AREA WRAP WITH FLOATING LINES */
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
         #input-area-wrap::before, #input-area-wrap::after {
@@ -151,7 +147,6 @@
         .rich-rendered-media { max-width: 280px; max-height: 200px; display: block; border-radius: 8px; margin: 8px; object-fit: contain; }
         .rich-rendered-file { display: inline-flex; align-items: center; gap: 10px; padding: 12px; color: #000; font-weight: bold; text-decoration: none; }
 
-        /* CUSTOM NOTIFICATION MODAL SYSTEM */
         #msg-alert-modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; 
@@ -166,23 +161,20 @@
         @media (max-width: 800px) {
             #input-area-wrap::before, #input-area-wrap::after, #chat-window::before { display: none; }
             #mobile-divider { display: block; }    
+            #settings-panel { position: relative; right: auto; top: auto; width: 90%; margin-bottom: 20px; }
             
             #chat-window { height: 55vh; }
-            
             .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             .msg-content-wrapper { flex-direction: column !important; align-items: center; max-width: 100%; width: 100%; gap: 8px; }
             .msg-row.self .avatar, .msg-row.other .avatar { margin: 0; }
             .bubble { width: 90%; max-width: 400px; text-align: center; }
             
             .placeholder-circle { width: 60px; height: 60px; }
-            #status-display { right: 20px; top: 20px; font-size: 10px; }
-            #controls-display { right: 20px; top: 42px; font-size: 9px; gap: 4px; align-items: flex-start; }
             #main-logo { height: 45px; }
         }
     </style>
 </head>
 <body>
-
     <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
     <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
 
@@ -215,16 +207,17 @@
 
     <div id="app">
         <div id="workspace">
-            <div id="status-display">LOGGED IN AS: ---</div>
-            
-            <div id="controls-display">
-                <div style="font-size: 14px; letter-spacing: 1px; margin-bottom: 4px; font-weight: bold; color: #ffffff;">ALERT SETTINGS</div>
-                <label class="switch-label">
-                    <input type="checkbox" id="toggle-modal" checked> Pop Up Alert
-                </label>
-                <label class="switch-label">
-                    <input type="checkbox" id="toggle-sound" checked> Sound Alert
-                </label>
+            <div id="settings-panel">
+                <div id="status-display">LOGGED IN AS: ---</div>
+                <div id="controls-display">
+                    <div style="font-size: 14px; letter-spacing: 1px; margin-bottom: 4px; font-weight: bold; color: #ffffff;">ALERT SETTINGS</div>
+                    <label class="switch-label">
+                        <input type="checkbox" id="toggle-modal" checked> Pop Up Alert
+                    </label>
+                    <label class="switch-label">
+                        <input type="checkbox" id="toggle-sound" checked> Sound Alert
+                    </label>
+                </div>
             </div>
 
             <div id="logo-wrap">
@@ -273,7 +266,6 @@
         let syncReady = false;
         const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
 
-        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
         const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
 
         async function verifyPassphrase(input) {
@@ -304,7 +296,6 @@
             startSync();
         };
 
-        // GLOBAL INTERCEPTOR: Watches screen visibility and processes Enter keys globally
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const gate = document.getElementById('gate-overlay');
@@ -320,7 +311,6 @@
             }
         });
 
-        // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
         var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
         var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
         var cachedE = null;
