@@ -129,25 +129,11 @@
 
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
-        /* LAYOUT ROW FOR EXTERNALIZED BUTTONS AND ICONS */
-        #input-box { 
-            width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent; gap: 15px;
-        }
-        
-        .input-icons { 
-            display: flex; gap: 15px; font-size: 20px; color: var(--line-color); flex-shrink: 0; align-items: center;
-        }
+        #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
+        .input-icons { display: flex; gap: 12px; font-size: 18px; color: var(--line-color); margin-right: 12px; position: relative; z-index: 2000; }
         .input-icons i { cursor: pointer; }
-        
-        /* INNER NARROWED TEXT INPUT FRAME */
-        #msg-input-frame {
-            flex: 1; height: 100%; border: 1px solid var(--line-color); background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
-        }
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
-        
-        #send-btn { 
-            background: transparent; border: none; color: cyan; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0;
-        }
+        #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; position: relative; z-index: 2000; }
 
         #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
         .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -177,8 +163,6 @@
             #status-display { right: 20px; top: 20px; font-size: 10px; }
             #controls-display { right: 20px; top: 42px; font-size: 9px; gap: 4px; align-items: flex-start; }
             #main-logo { height: 45px; }
-            #input-box { gap: 10px; }
-            .input-icons { gap: 10px; font-size: 18px; }
         }
     </style>
 </head>
@@ -251,9 +235,7 @@
                         <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
                         <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
                     </div>
-                    <div id="msg-input-frame">
-                        <input type="text" id="msg-input" placeholder="Type Message...">
-                    </div>
+                    <input type="text" id="msg-input" placeholder="Type Message...">
                     <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
