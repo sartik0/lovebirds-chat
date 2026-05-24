@@ -65,7 +65,7 @@
             content: ""; position: absolute;
             top: 130px; /* Aligns roughly with start of chat window */
             bottom: 60px; /* Aligns with bottom of input box (accounting for footer margin) */
-            width: 1px; background: var(--line-color); z-index: -1;
+            width: 1px; background: var(--line-color); z-index: 1; /* FIXED Z-INDEX */
         }
         #workspace::before { left: 4%; }  /* Aligns with 92% width of chat elements */
         #workspace::after { right: 4%; } /* Aligns with 92% width of chat elements */
@@ -100,7 +100,7 @@
         /* DESKTOP VERTICAL LINE */
         #chat-window::before {
             content: ""; position: absolute; left: 50%; top: 0; bottom: 0;
-            width: 1px; background: var(--line-color); z-index: -1;
+            width: 1px; background: var(--line-color); z-index: -1; /* This remains -1 to sit slightly behind messages in the scroll area */
         }
 
         /* MOBILE HORIZONTAL LINE */
