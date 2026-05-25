@@ -19,14 +19,20 @@
             background-color: #000;
             background-image: url('black-gold.png'); 
             background-size: cover; background-position: center;
-            color: white; font-family: sans-serif; overflow-x: hidden; 
+            color: white; font-family: sans-serif; overflow-x: auto; 
         }
 
         *:focus { outline: none !important; }
 
-        /* PARENT WRAPPER FOR CENTERING */
+        /* GRID LAYOUT FOR PERFECT ALIGNMENT */
         #main-wrapper {
-            display: flex; justify-content: center; width: 100%; position: relative; padding-top: 50px;
+            display: grid; 
+            grid-template-columns: minmax(auto, 1400px) 200px;
+            justify-content: center;
+            gap: 30px; /* This maintains the exact 30px gap */
+            padding-top: 50px;
+            width: fit-content;
+            margin: 0 auto;
         }
 
         /* SECURITY PASSWORD MODAL GATEWAY */
@@ -64,12 +70,9 @@
             width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
         }
 
-        /* SETTINGS PANEL (FIXED RELATIVE TO WORKSPACE EDGE) */
         #settings-panel {
-            position: absolute; top: 40px; 
-            left: calc(50% + 730px); /* Centers workspace at 1400px, 700px half + 30px gap */
             width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
-            z-index: 1; color: white;
+            z-index: 1; color: white; height: fit-content;
         }
         #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
@@ -81,7 +84,7 @@
         #main-logo { height: 60px; width: auto; pointer-events: none; }
 
         #chat-window { 
-            width: 92%; max-width: 1220px; height: 50vh; 
+            width: 100%; max-width: 1220px; height: 50vh; 
             margin: 10px 0; padding: 20px 0;
             overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
             z-index: 5; scrollbar-width: none; position: relative;
@@ -129,7 +132,7 @@
         .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
         .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
 
-        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
+        #input-area-wrap { width: 100%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
         #input-area-wrap::before, #input-area-wrap::after {
             content: ""; position: absolute;
@@ -164,22 +167,20 @@
         .alert-modal-box h2 { font-size: 18px; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px; line-height: 1.4; }
         .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
 
-        @media (max-width: 1500px) {
-            #main-wrapper { flex-direction: column; align-items: center; }
-            #settings-panel { position: relative; left: auto; top: auto; margin-top: 20px; width: 92%; }
+        @media (max-width: 1650px) {
+            #main-wrapper { grid-template-columns: 1fr; padding: 20px; }
+            #settings-panel { width: 90%; margin: 20px auto; }
         }
 
         @media (max-width: 800px) {
             #input-area-wrap::before, #input-area-wrap::after, #chat-window::before { display: none; }
             #mobile-divider { display: block; }    
             #settings-panel { width: 90%; }
-            
             #chat-window { height: 55vh; }
             .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             .msg-content-wrapper { flex-direction: column !important; align-items: center; max-width: 100%; width: 100%; gap: 8px; }
             .msg-row.self .avatar, .msg-row.other .avatar { margin: 0; }
             .bubble { width: 90%; max-width: 400px; text-align: center; }
-            
             .placeholder-circle { width: 60px; height: 60px; }
             #main-logo { height: 45px; }
         }
