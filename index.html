@@ -59,11 +59,12 @@
             width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
         }
 
-        /* SETTINGS PANEL (TOP RIGHT BOX) */
+        /* SETTINGS PANEL (TOP RIGHT BOX) - FIXED Z-INDEX */
         #settings-panel {
             position: absolute; top: 40px; left: calc(100% + 30px);
             width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
-            z-index: 20; color: white;
+            z-index: 1; /* REDUCED to ensure it doesn't block modals */
+            color: white;
         }
         #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
@@ -247,3 +248,258 @@
                         <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
                         <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
                     </div>
+                    <input type="text" id="msg-input" placeholder="Type Message...">
+                    <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <input type="file" id="hidden-file-element" style="display: none;">
+
+            <div id="avatar-footer">
+                <div class="placeholder-circle"><img src="Selena.png"></div>
+                <div class="placeholder-circle"><img src="Sarti.png"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPA_URL = 'https://wegsfwhemblmsfhrkjmu.supabase.co'; 
+        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZ3Nmd2hlbWJsbXNmaHJram11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTMzMDYsImV4cCI6MjA5MjQ2OTMwNn0.S8YLjVm-R_qKE_Vzj6xANyoN1DEmJ0oHJCEK1y18QUY'; 
+        const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+        let activeUser = ""; 
+        let syncReady = false;
+        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
+
+        const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
+
+        async function verifyPassphrase(input) {
+            const encodedText = new TextEncoder().encode(input);
+            const digestBuffer = await crypto.subtle.digest('SHA-256', encodedText);
+            const hexResult = Array.from(new Uint8Array(digestBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            return hexResult === SYSTEM_SECURE_TOKEN;
+        }
+
+        async function handleGateSubmit() {
+            const secretInput = document.getElementById('gate-password').value;
+            const authenticated = await verifyPassphrase(secretInput);
+            if (authenticated) {
+                document.getElementById('gate-overlay').style.display = 'none';
+                document.getElementById('overlay').style.display = 'flex';
+            } else {
+                document.getElementById('gate-error').innerText = "Incorrect Password";
+            }
+        }
+
+        document.getElementById('gate-submit-btn').onclick = handleGateSubmit;
+
+        document.getElementById('login-btn').onclick = () => {
+            activeUser = document.getElementById('user-select').value;
+            document.getElementById('status-display').innerText = "LOGGED IN AS: " + activeUser;
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            startSync();
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const gate = document.getElementById('gate-overlay');
+                const overlay = document.getElementById('overlay');
+                
+                if (gate && window.getComputedStyle(gate).display !== 'none') {
+                    e.preventDefault();
+                    handleGateSubmit();
+                } else if (overlay && window.getComputedStyle(overlay).display === 'flex') {
+                    e.preventDefault();
+                    document.getElementById('login-btn').click();
+                }
+            }
+        });
+
+        var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
+        var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
+        var cachedE = null;
+
+        window.toggleEmojiPanel = function() {
+            var p = document.getElementById('emoji-panel'); if (!p) return;
+            var vis = (p.style.display === 'block');
+            if (vis) {
+                p.style.display = 'none';
+            } else {
+                p.style.display = 'block'; p.style.bottom = '100%'; p.style.marginBottom = '10px';
+                var rect = p.getBoundingClientRect(); 
+                if (rect.top < 0) { p.style.bottom = 'auto'; p.style.top = '100%'; p.style.marginTop = '10px'; p.style.marginBottom = '0px'; }
+                switchTab('emoji');
+            }
+        };
+
+        document.getElementById('toggle-emoji-btn').onclick = function() {
+            toggleEmojiPanel();
+        };
+
+        async function getEmojiData() {
+            if (cachedE) return cachedE;
+            var stored = localStorage.getItem('sarti_emojis_v3');
+            if (stored) { cachedE = JSON.parse(stored); return cachedE; }
+            try { 
+                var r = await fetch(E_URL); var data = await r.json(); cachedE = Object.keys(data); 
+                localStorage.setItem('sarti_emojis_v3', JSON.stringify(cachedE)); return cachedE; 
+            } catch (e) { 
+                return ["😀","😂","😍","👍","🙏","😎","🔥","✨","🤔","😊"]; 
+            }
+        }
+
+        window.switchTab = async function(type) {
+            var body = document.getElementById('panel-body'), btns = document.querySelectorAll('#emoji-panel .tab-btn');
+            btns.forEach(function(b) { b.classList.remove('active'); }); body.innerHTML = "Loading...";
+            
+            if (type === 'emoji') {
+                btns[0].classList.add('active'); body.className = "panel-content emoji-grid";
+                var emojis = await getEmojiData(); body.innerHTML = "";
+                emojis.forEach(function(e) { 
+                    var s = document.createElement('span'); s.innerText = e; 
+                    s.onclick = function() { document.getElementById('msg-input').value += e; }; 
+                    body.appendChild(s); 
+                });
+            } else {
+                var idx = (type === 'gif' ? 1 : 2), ep = (type === 'gif' ? 'gifs' : 'stickers');
+                btns[idx].classList.add('active'); body.className = "panel-content media-grid";
+                try { 
+                    var r = await fetch('https://api.giphy.com/v1/' + ep + '/trending?api_key=' + G_KEY + '&limit=12&rating=g'); 
+                    var j = await r.json(); body.innerHTML = "";
+                    j.data.forEach(function(g) { 
+                        var i = document.createElement('img'); i.src = g.images.fixed_height_small.url; 
+                        i.onclick = function() { directPostMedia(g.images.fixed_height.url); toggleEmojiPanel(); }; 
+                        body.appendChild(i); 
+                    });
+                } catch (e) { body.innerHTML = "Giphy Error"; }
+            }
+        };
+
+        document.getElementById('trigger-file-btn').onclick = () => {
+            document.getElementById('hidden-file-element').click();
+        };
+
+        document.getElementById('hidden-file-element').onchange = (e) => {
+            const pickedFile = e.target.files[0];
+            if (!pickedFile) return;
+            const fileReader = new FileReader();
+            fileReader.onload = async (event) => {
+                const base64DataPayload = event.target.result;
+                await _client.from('messages').insert([{ sender: activeUser, content: `BASE64_STREAM||${pickedFile.name}||${base64DataPayload}` }]);
+            };
+            fileReader.readAsDataURL(pickedFile);
+        };
+
+        async function directPostMedia(url) {
+            await _client.from('messages').insert([{ sender: activeUser, content: `EXTERNAL_URL_MEDIA||${url}` }]);
+            document.getElementById('emoji-panel').style.display = 'none';
+        }
+
+        function draw(msg) {
+            const isSelf = msg.sender === activeUser;
+            const win = document.getElementById('chat-window');
+            const row = document.createElement('div');
+            const msgId = `msg-${Date.now()}-${Math.random()}`; 
+            row.className = `msg-row ${isSelf ? 'self' : 'other'}`;
+            
+            let renderingBlock = "";
+            
+            if (msg.content.startsWith("BASE64_STREAM||")) {
+                const details = msg.content.split("||");
+                const fileName = details[1];
+                const rawData = details[2];
+                if (rawData.startsWith("data:image/") || rawData.startsWith("data:video/")) {
+                    renderingBlock = rawData.startsWith("data:image/") ? 
+                        `<img src="${rawData}" class="rich-rendered-media">` : 
+                        `<video src="${rawData}" controls class="rich-rendered-media"></video>`;
+                } else {
+                    renderingBlock = `<div class="lang-top"><a href="${rawData}" download="${fileName}" class="rich-rendered-file"><i class="fa-solid fa-file-arrow-down"></i> ${fileName}</a></div>`;
+                }
+            } else if (msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
+                const srcUrl = msg.content.split("||")[1];
+                renderingBlock = `<img src="${srcUrl}" class="rich-rendered-media">`;
+            } else {
+                renderingBlock = `
+                    <div class="lang-top" id="${msgId}-translated">${msg.content}</div>
+                    <div class="lang-bottom">${msg.content}</div>
+                `;
+            }
+            
+            row.innerHTML = `
+                <div class="msg-content-wrapper">
+                    <img src="${avatars[msg.sender] || 'Sarti.png'}" class="avatar">
+                    <div class="bubble ${msg.sender}">
+                        ${renderingBlock}
+                    </div>
+                </div>
+            `;
+            win.appendChild(row);
+            win.scrollTop = win.scrollHeight;
+
+            if (!isSelf && !msg.content.startsWith("BASE64_STREAM||") && !msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
+                const langPair = (activeUser === 'Sarti') ? 'zh|en' : 'en|zh';
+                fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=${langPair}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        const trans = json.responseData.translatedText;
+                        if (trans && trans !== "null") {
+                            const node = document.getElementById(`${msgId}-translated`);
+                            if (node) node.innerText = trans;
+                        }
+                    })
+                    .catch(e => console.error("Translation Engine Exception", e));
+            }
+        }
+
+        async function send() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+            await _client.from('messages').insert([{ sender: activeUser, content: text }]);
+            input.value = "";
+        }
+
+        document.getElementById('send-btn').onclick = send;
+        document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
+
+        document.getElementById('msg-alert-close').onclick = () => {
+            document.getElementById('msg-alert-modal').style.display = 'none';
+        };
+
+        document.addEventListener('mousedown', function(e) {
+            if (!e.target.closest('#emoji-panel') && !e.target.closest('#toggle-emoji-btn')) {
+                var p = document.getElementById('emoji-panel');
+                if (p) p.style.display = 'none';
+            }
+        });
+
+        async function startSync() {
+            const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true }).limit(50); 
+            const divider = document.getElementById('mobile-divider');
+            document.getElementById('chat-window').innerHTML = "";
+            document.getElementById('chat-window').appendChild(divider);
+            if (data) { data.filter(m => avatars[m.sender]).forEach(m => draw(m)); }
+            
+            setTimeout(() => { syncReady = true; }, 1000);
+
+            _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
+                if(avatars[p.new.sender]) {
+                    draw(p.new);
+                    
+                    if (syncReady && p.new.sender !== activeUser) {
+                        if (document.getElementById('toggle-sound').checked) {
+                            const soundNode = document.getElementById('audio-' + p.new.sender.toLowerCase());
+                            if (soundNode) soundNode.play().catch(e => console.error("Audio block runtime protection:", e));
+                        }
+                        if (document.getElementById('toggle-modal').checked) {
+                            document.getElementById('msg-alert-text').innerText = "New message received from " + p.new.sender;
+                            document.getElementById('msg-alert-modal').style.display = 'flex';
+                        }
+                    }
+                }
+            }).subscribe();
+        }
+    </script>
+</body>
+</html>
