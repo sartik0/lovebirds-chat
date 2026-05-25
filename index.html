@@ -19,14 +19,14 @@
             background-color: #000;
             background-image: url('black-gold.png'); 
             background-size: cover; background-position: center;
-            color: white; font-family: sans-serif; overflow-x: hidden; /* Allow horizontal scroll if needed */
+            color: white; font-family: sans-serif; overflow-x: hidden; 
         }
 
         *:focus { outline: none !important; }
 
-        /* FLEX WRAPPER FOR LAYOUT */
+        /* PARENT WRAPPER FOR CENTERING */
         #main-wrapper {
-            display: flex; justify-content: center; width: 100%; padding-top: 50px;
+            display: flex; justify-content: center; width: 100%; position: relative; padding-top: 50px;
         }
 
         /* SECURITY PASSWORD MODAL GATEWAY */
@@ -64,12 +64,12 @@
             width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
         }
 
-        /* SETTINGS PANEL (TOP RIGHT BOX) - FLOW ALIGNMENT */
+        /* SETTINGS PANEL (FIXED RELATIVE TO WORKSPACE EDGE) */
         #settings-panel {
-            position: relative; 
-            margin-left: 30px; /* Exact 30px from the workspace edge */
+            position: absolute; top: 40px; 
+            left: calc(50% + 730px); /* Centers workspace at 1400px, 700px half + 30px gap */
             width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
-            z-index: 1; color: white; height: fit-content;
+            z-index: 1; color: white;
         }
         #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
@@ -164,9 +164,9 @@
         .alert-modal-box h2 { font-size: 18px; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px; line-height: 1.4; }
         .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
 
-        @media (max-width: 1400px) {
-            #main-wrapper { flex-direction: column; align-items: center; padding-right: 0; }
-            #settings-panel { position: relative; margin-left: 0; width: 92%; margin-bottom: 20px; }
+        @media (max-width: 1500px) {
+            #main-wrapper { flex-direction: column; align-items: center; }
+            #settings-panel { position: relative; left: auto; top: auto; margin-top: 20px; width: 92%; }
         }
 
         @media (max-width: 800px) {
