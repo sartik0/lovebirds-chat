@@ -59,12 +59,12 @@
             width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
         }
 
-        /* SETTINGS PANEL (TOP RIGHT BOX) - FIXED Z-INDEX */
+        /* SETTINGS PANEL (TOP RIGHT BOX) - CORRECTED OFFSET */
         #settings-panel {
-            position: absolute; top: 40px; left: calc(100% + 30px);
+            position: absolute; top: 40px; 
+            left: calc(50% + 630px); /* Centers workspace at 1260px width, adds 30px buffer to edge */
             width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
-            z-index: 1; /* REDUCED to ensure it doesn't block modals */
-            color: white;
+            z-index: 1; color: white;
         }
         #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
