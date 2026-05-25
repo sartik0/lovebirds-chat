@@ -11,504 +11,56 @@
             --sarti: rgb(52, 137, 255); 
             --selena: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
-            --cy: cyan;
+            --gold-header: #9C6F41;
         }
 
         body, html { 
-            margin: 0; padding: 0; height: 100%; 
-            background-color: #000;
-            background-image: url('black-gold.png'); 
-            background-size: cover; background-position: center;
-            color: white; font-family: sans-serif; overflow-x: auto; 
+            margin: 0; padding: 0; height: 100%; background-color: #000;
+            color: white; font-family: sans-serif; overflow: hidden; 
         }
 
-        *:focus { outline: none !important; }
+        #app { display: none; height: 100vh; width: 100%; display: flex; justify-content: center; }
+        #workspace { width: 100%; max-width: 1220px; position: relative; display: flex; flex-direction: column; align-items: center; }
 
-        /* GRID LAYOUT FOR PERFECT ALIGNMENT */
-        #main-wrapper {
-            display: grid; 
-            grid-template-columns: minmax(auto, 1400px) 200px;
-            justify-content: center;
-            gap: 30px; /* This maintains the exact 30px gap */
-            padding-top: 50px;
-            width: fit-content;
-            margin: 0 auto;
+        /* THE GOLD HEADER BAR */
+        #top-header-bar {
+            width: 100%; height: 50px; background: var(--gold-header);
+            margin-top: 20px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-sizing: border-box; font-size: 14px; font-weight: bold;
         }
+        .header-section { display: flex; align-items: center; gap: 15px; }
 
-        /* SECURITY PASSWORD MODAL GATEWAY */
-        #gate-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 5000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        #gate-overlay input, #gate-overlay button {
-            padding: 15px; font-size: 18px; border-radius: 8px; width: 100%; max-width: 320px; 
-            margin: 10px; border: 1px solid var(--line-color); background: #111; color: white;
-        }
-        #gate-overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
-        #gate-error { color: #ff5555; font-size: 14px; margin-top: 5px; height: 20px; font-weight: bold; }
-
-        /* RESPONSIVE LOGIN OVERLAY */
-        #overlay { 
-            position: fixed; inset: 0; background: #000; z-index: 1000; 
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        #overlay-logo-container { width: 100%; display: flex; justify-content: center; pointer-events: none; margin-bottom: 20px; }
-        #overlay-logo { width: 100%; max-width: 256px; height: auto; object-fit: contain; }
-        #login-form { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        #overlay select, #overlay button { 
-            padding: 15px; font-size: 18px; border-radius: 8px; width: 100%; max-width: 320px; 
-            margin: 10px; border: 1px solid var(--line-color); background: #111; color: white; 
-            position: relative; z-index: 2000;
-        }
-        #overlay button { background: var(--line-color); color: #000; font-weight: bold; cursor: pointer; border: none; }
-
-        #app { display: none; height: 100vh; width: 100%; justify-content: center; }
+        /* CHAT AREA WITH VERTICAL LINES */
+        #chat-container { width: 100%; flex: 1; position: relative; border-left: 1px solid var(--line-color); border-right: 1px solid var(--line-color); }
         
-        #workspace { 
-            width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center; position: relative; 
-        }
+        /* ... (Existing Chat/Input CSS) ... */
 
-        #settings-panel {
-            width: 200px; padding: 15px; border: 1px solid var(--line-color); background: #000;
-            z-index: 1; color: white; height: fit-content;
-        }
-        #status-display { color: var(--line-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        #controls-display { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--line-color); align-items: flex-start; }
-        
-        .switch-label { display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .switch-label input { accent-color: var(--line-color); cursor: pointer; margin: 0; }
-
-        #logo-wrap { margin-top: 50px; margin-bottom: 15px; z-index: 10; }
-        #main-logo { height: 60px; width: auto; pointer-events: none; }
-
-        #chat-window { 
-            width: 100%; max-width: 1220px; height: 50vh; 
-            margin: 10px 0; padding: 20px 0;
-            overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
-            z-index: 5; scrollbar-width: none; position: relative;
-        }
-        #chat-window::-webkit-scrollbar { display: none; }
-
-        #chat-window::before {
-            content: ""; position: absolute; left: 50%; top: 0; bottom: 0;
-            width: 1px; background: var(--line-color); z-index: -1;
-        }
-
-        #mobile-divider { 
-            display: none; width: 100%; height: 1px; 
-            background: var(--line-color); margin: 10px 0; order: 2;
-        }
-
-        .msg-row { display: flex !important; width: 100% !important; padding: 0 !important; }
-        .msg-row.other { justify-content: flex-start !important; width: 50% !important; align-self: flex-start; order: 3; }
-        .msg-row.self { justify-content: flex-end !important; width: 50% !important; align-self: flex-end; order: 1; }
-        
-        .msg-row.self .msg-content-wrapper { flex-direction: row-reverse; }
-        .msg-row.self .avatar { margin-left: 10px; }
-        .msg-row.other .avatar { margin-right: 10px; }
-        
-        .msg-content-wrapper { display: flex; align-items: flex-start; max-width: 90%; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-color); flex-shrink: 0; object-fit: cover; }
-
-        .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; word-break: break-word; }
-        .bubble.Sarti { background: var(--sarti); }
-        .bubble.Selena { background: var(--selena); }
-        .lang-top { padding: 10px 15px; font-weight: bold; }
-        .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
-
-        .emoji-panel { 
-            display: none; position: absolute; width: 100%; max-width: 350px; 
-            background: #2a2a2a; border: 1px solid #444; border-radius: 12px; 
-            z-index: 4000; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.6); 
-        }
-        .panel-content { max-height: 220px; overflow-y: auto; padding: 10px; min-height: 150px; background: #1a1a1a; }
-        .emoji-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; font-size: 24px; text-align: center; cursor: pointer; }
-        .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .media-grid img { width: 100%; border-radius: 6px; cursor: pointer; height: 100px; object-fit: cover; }
-        
-        .tab-bar { display: flex; background: #1e1e1e; border-top: 1px solid #444; }
-        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
-
-        #input-area-wrap { width: 100%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
-        
-        #input-area-wrap::before, #input-area-wrap::after {
-            content: ""; position: absolute;
-            bottom: calc(100% + 8px); 
-            height: 52vh; 
-            width: 1px; background: var(--line-color); z-index: 1;
-        }
-        #input-area-wrap::before { left: 0; }
-        #input-area-wrap::after { right: 0; }
-        
-        #input-box { width: 100%; height: 50px; border: 1px solid var(--line-color); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; background: rgba(0,0,0,0.6); }
-        .input-icons { display: flex; gap: 12px; font-size: 18px; color: var(--line-color); margin-right: 12px; position: relative; z-index: 2000; }
-        .input-icons i { cursor: pointer; }
-        #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
-        #send-btn { background: transparent; border: none; color: cyan; font-size: 20px; cursor: pointer; position: relative; z-index: 2000; }
-
-        #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
-        .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .placeholder-circle img { width: 100%; height: 100%; object-fit: cover; }
-
-        .rich-rendered-media { max-width: 280px; max-height: 200px; display: block; border-radius: 8px; margin: 8px; object-fit: contain; }
-        .rich-rendered-file { display: inline-flex; align-items: center; gap: 10px; padding: 12px; color: #000; font-weight: bold; text-decoration: none; }
-
-        #msg-alert-modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; 
-        }
-        .alert-modal-box { 
-            background: #111; padding: 30px; border-radius: 15px; text-align: center; 
-            border: 1px solid var(--line-color); color: white; max-width: 325px; width: 85%; 
-        }
-        .alert-modal-box h2 { font-size: 18px; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px; line-height: 1.4; }
-        .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        @media (max-width: 1650px) {
-            #main-wrapper { grid-template-columns: 1fr; padding: 20px; }
-            #settings-panel { width: 90%; margin: 20px auto; }
-        }
-
-        @media (max-width: 800px) {
-            #input-area-wrap::before, #input-area-wrap::after, #chat-window::before { display: none; }
-            #mobile-divider { display: block; }    
-            #settings-panel { width: 90%; }
-            #chat-window { height: 55vh; }
-            .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
-            .msg-content-wrapper { flex-direction: column !important; align-items: center; max-width: 100%; width: 100%; gap: 8px; }
-            .msg-row.self .avatar, .msg-row.other .avatar { margin: 0; }
-            .bubble { width: 90%; max-width: 400px; text-align: center; }
-            .placeholder-circle { width: 60px; height: 60px; }
-            #main-logo { height: 45px; }
-        }
+        #input-area-wrap { width: 100%; border-left: 1px solid var(--line-color); border-right: 1px solid var(--line-color); padding: 10px 0; }
+        #input-box { width: 100%; border-top: 1px solid var(--line-color); border-bottom: 1px solid var(--line-color); height: 50px; display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; }
     </style>
 </head>
 <body>
-    <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
-    <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
-
-    <div id="msg-alert-modal">
-        <div class="alert-modal-box">
-            <h2 id="msg-alert-text">New message received</h2>
-            <button id="msg-alert-close">OK</button>
-        </div>
-    </div>
-
-    <div id="gate-overlay">
-        <h2 style="letter-spacing: 2px; font-weight: 300; margin-bottom: 20px;">HIGH SECURITY ACCESS</h2>
-        <input type="password" id="gate-password" placeholder="Enter Password">
-        <button id="gate-submit-btn">VALIDATE</button>
-        <div id="gate-error"></div>
-    </div>
-
-    <div id="overlay">
-        <div id="overlay-logo-container">
-            <img id="overlay-logo" src="wethreelove.png">
-        </div>
-        <div id="login-form">
-            <select id="user-select">
-                <option value="Selena">Selena</option>
-                <option value="Sarti">Sarti</option>
-            </select>
-            <button id="login-btn">ENTER CHAT</button>
-        </div>
-    </div>
-
     <div id="app">
-        <div id="main-wrapper">
-            <div id="workspace">
-                <div id="logo-wrap">
-                    <img id="main-logo" src="wethreelove.png">
-                </div>
-                
-                <div id="chat-window">
-                    <div id="mobile-divider"></div>
-                </div>
-
-                <div id="input-area-wrap">
-                    <div id="emoji-panel" class="emoji-panel">
-                        <div id="panel-body" class="panel-content"></div>
-                        <div class="tab-bar">
-                            <button class="tab-btn active" onclick="switchTab('emoji')">😊</button>
-                            <button class="tab-btn" onclick="switchTab('gif')">GIF</button>
-                            <button class="tab-btn" onclick="switchTab('sticker')">STK</button>
-                        </div>
-                    </div>
-
-                    <div id="input-box">
-                        <div class="input-icons">
-                            <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
-                            <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
-                        </div>
-                        <input type="text" id="msg-input" placeholder="Type Message...">
-                        <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
-                </div>
-
-                <input type="file" id="hidden-file-element" style="display: none;">
-
-                <div id="avatar-footer">
-                    <div class="placeholder-circle"><img src="Selena.png"></div>
-                    <div class="placeholder-circle"><img src="Sarti.png"></div>
+        <div id="workspace">
+            <div id="top-header-bar">
+                <div class="header-section" id="user-status">LOGGED IN AS: ---</div>
+                <div class="header-section">
+                    <span>ALERT SETTINGS:</span>
+                    <label><input type="checkbox" checked> POP UP ALERT</label>
+                    <label><input type="checkbox" checked> SOUND ALERT</label>
                 </div>
             </div>
+            
+            <div id="chat-container">
+                </div>
 
-            <div id="settings-panel">
-                <div id="status-display">LOGGED IN AS: ---</div>
-                <div id="controls-display">
-                    <div style="font-size: 14px; letter-spacing: 1px; margin-bottom: 4px; font-weight: bold; color: #ffffff;">ALERT SETTINGS</div>
-                    <label class="switch-label">
-                        <input type="checkbox" id="toggle-modal" checked> Pop Up Alert
-                    </label>
-                    <label class="switch-label">
-                        <input type="checkbox" id="toggle-sound" checked> Sound Alert
-                    </label>
+            <div id="input-area-wrap">
+                <div id="input-box">
+                    <input type="text" id="msg-input" placeholder="Type Message...">
+                    <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        const SUPA_URL = 'https://wegsfwhemblmsfhrkjmu.supabase.co'; 
-        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZ3Nmd2hlbWJsbXNmaHJram11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTMzMDYsImV4cCI6MjA5MjQ2OTMwNn0.S8YLjVm-R_qKE_Vzj6xANyoN1DEmJ0oHJCEK1y18QUY'; 
-        const _client = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-        let activeUser = ""; 
-        let syncReady = false;
-        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
-
-        const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
-
-        async function verifyPassphrase(input) {
-            const encodedText = new TextEncoder().encode(input);
-            const digestBuffer = await crypto.subtle.digest('SHA-256', encodedText);
-            const hexResult = Array.from(new Uint8Array(digestBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-            return hexResult === SYSTEM_SECURE_TOKEN;
-        }
-
-        async function handleGateSubmit() {
-            const secretInput = document.getElementById('gate-password').value;
-            const authenticated = await verifyPassphrase(secretInput);
-            if (authenticated) {
-                document.getElementById('gate-overlay').style.display = 'none';
-                document.getElementById('overlay').style.display = 'flex';
-            } else {
-                document.getElementById('gate-error').innerText = "Incorrect Password";
-            }
-        }
-
-        document.getElementById('gate-submit-btn').onclick = handleGateSubmit;
-
-        document.getElementById('login-btn').onclick = () => {
-            activeUser = document.getElementById('user-select').value;
-            document.getElementById('status-display').innerText = "LOGGED IN AS: " + activeUser;
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
-            startSync();
-        };
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const gate = document.getElementById('gate-overlay');
-                const overlay = document.getElementById('overlay');
-                
-                if (gate && window.getComputedStyle(gate).display !== 'none') {
-                    e.preventDefault();
-                    handleGateSubmit();
-                } else if (overlay && window.getComputedStyle(overlay).display === 'flex') {
-                    e.preventDefault();
-                    document.getElementById('login-btn').click();
-                }
-            }
-        });
-
-        var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
-        var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
-        var cachedE = null;
-
-        window.toggleEmojiPanel = function() {
-            var p = document.getElementById('emoji-panel'); if (!p) return;
-            var vis = (p.style.display === 'block');
-            if (vis) {
-                p.style.display = 'none';
-            } else {
-                p.style.display = 'block'; p.style.bottom = '100%'; p.style.marginBottom = '10px';
-                var rect = p.getBoundingClientRect(); 
-                if (rect.top < 0) { p.style.bottom = 'auto'; p.style.top = '100%'; p.style.marginTop = '10px'; p.style.marginBottom = '0px'; }
-                switchTab('emoji');
-            }
-        };
-
-        document.getElementById('toggle-emoji-btn').onclick = function() {
-            toggleEmojiPanel();
-        };
-
-        async function getEmojiData() {
-            if (cachedE) return cachedE;
-            var stored = localStorage.getItem('sarti_emojis_v3');
-            if (stored) { cachedE = JSON.parse(stored); return cachedE; }
-            try { 
-                var r = await fetch(E_URL); var data = await r.json(); cachedE = Object.keys(data); 
-                localStorage.setItem('sarti_emojis_v3', JSON.stringify(cachedE)); return cachedE; 
-            } catch (e) { 
-                return ["😀","😂","😍","👍","🙏","😎","🔥","✨","🤔","😊"]; 
-            }
-        }
-
-        window.switchTab = async function(type) {
-            var body = document.getElementById('panel-body'), btns = document.querySelectorAll('#emoji-panel .tab-btn');
-            btns.forEach(function(b) { b.classList.remove('active'); }); body.innerHTML = "Loading...";
-            
-            if (type === 'emoji') {
-                btns[0].classList.add('active'); body.className = "panel-content emoji-grid";
-                var emojis = await getEmojiData(); body.innerHTML = "";
-                emojis.forEach(function(e) { 
-                    var s = document.createElement('span'); s.innerText = e; 
-                    s.onclick = function() { document.getElementById('msg-input').value += e; }; 
-                    body.appendChild(s); 
-                });
-            } else {
-                var idx = (type === 'gif' ? 1 : 2), ep = (type === 'gif' ? 'gifs' : 'stickers');
-                btns[idx].classList.add('active'); body.className = "panel-content media-grid";
-                try { 
-                    var r = await fetch('https://api.giphy.com/v1/' + ep + '/trending?api_key=' + G_KEY + '&limit=12&rating=g'); 
-                    var j = await r.json(); body.innerHTML = "";
-                    j.data.forEach(function(g) { 
-                        var i = document.createElement('img'); i.src = g.images.fixed_height_small.url; 
-                        i.onclick = function() { directPostMedia(g.images.fixed_height.url); toggleEmojiPanel(); }; 
-                        body.appendChild(i); 
-                    });
-                } catch (e) { body.innerHTML = "Giphy Error"; }
-            }
-        };
-
-        document.getElementById('trigger-file-btn').onclick = () => {
-            document.getElementById('hidden-file-element').click();
-        };
-
-        document.getElementById('hidden-file-element').onchange = (e) => {
-            const pickedFile = e.target.files[0];
-            if (!pickedFile) return;
-            const fileReader = new FileReader();
-            fileReader.onload = async (event) => {
-                const base64DataPayload = event.target.result;
-                await _client.from('messages').insert([{ sender: activeUser, content: `BASE64_STREAM||${pickedFile.name}||${base64DataPayload}` }]);
-            };
-            fileReader.readAsDataURL(pickedFile);
-        };
-
-        async function directPostMedia(url) {
-            await _client.from('messages').insert([{ sender: activeUser, content: `EXTERNAL_URL_MEDIA||${url}` }]);
-            document.getElementById('emoji-panel').style.display = 'none';
-        }
-
-        function draw(msg) {
-            const isSelf = msg.sender === activeUser;
-            const win = document.getElementById('chat-window');
-            const row = document.createElement('div');
-            const msgId = `msg-${Date.now()}-${Math.random()}`; 
-            row.className = `msg-row ${isSelf ? 'self' : 'other'}`;
-            
-            let renderingBlock = "";
-            
-            if (msg.content.startsWith("BASE64_STREAM||")) {
-                const details = msg.content.split("||");
-                const fileName = details[1];
-                const rawData = details[2];
-                if (rawData.startsWith("data:image/") || rawData.startsWith("data:video/")) {
-                    renderingBlock = rawData.startsWith("data:image/") ? 
-                        `<img src="${rawData}" class="rich-rendered-media">` : 
-                        `<video src="${rawData}" controls class="rich-rendered-media"></video>`;
-                } else {
-                    renderingBlock = `<div class="lang-top"><a href="${rawData}" download="${fileName}" class="rich-rendered-file"><i class="fa-solid fa-file-arrow-down"></i> ${fileName}</a></div>`;
-                }
-            } else if (msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
-                const srcUrl = msg.content.split("||")[1];
-                renderingBlock = `<img src="${srcUrl}" class="rich-rendered-media">`;
-            } else {
-                renderingBlock = `
-                    <div class="lang-top" id="${msgId}-translated">${msg.content}</div>
-                    <div class="lang-bottom">${msg.content}</div>
-                `;
-            }
-            
-            row.innerHTML = `
-                <div class="msg-content-wrapper">
-                    <img src="${avatars[msg.sender] || 'Sarti.png'}" class="avatar">
-                    <div class="bubble ${msg.sender}">
-                        ${renderingBlock}
-                    </div>
-                </div>
-            `;
-            win.appendChild(row);
-            win.scrollTop = win.scrollHeight;
-
-            if (!isSelf && !msg.content.startsWith("BASE64_STREAM||") && !msg.content.startsWith("EXTERNAL_URL_MEDIA||")) {
-                const langPair = (activeUser === 'Sarti') ? 'zh|en' : 'en|zh';
-                fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=${langPair}`)
-                    .then(res => res.json())
-                    .then(json => {
-                        const trans = json.responseData.translatedText;
-                        if (trans && trans !== "null") {
-                            const node = document.getElementById(`${msgId}-translated`);
-                            if (node) node.innerText = trans;
-                        }
-                    })
-                    .catch(e => console.error("Translation Engine Exception", e));
-            }
-        }
-
-        async function send() {
-            const input = document.getElementById('msg-input');
-            const text = input.value.trim();
-            if (!text) return;
-            await _client.from('messages').insert([{ sender: activeUser, content: text }]);
-            input.value = "";
-        }
-
-        document.getElementById('send-btn').onclick = send;
-        document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
-
-        document.getElementById('msg-alert-close').onclick = () => {
-            document.getElementById('msg-alert-modal').style.display = 'none';
-        };
-
-        document.addEventListener('mousedown', function(e) {
-            if (!e.target.closest('#emoji-panel') && !e.target.closest('#toggle-emoji-btn')) {
-                var p = document.getElementById('emoji-panel');
-                if (p) p.style.display = 'none';
-            }
-        });
-
-        async function startSync() {
-            const { data } = await _client.from('messages').select('*').order('created_at', { ascending: true }).limit(50); 
-            const divider = document.getElementById('mobile-divider');
-            document.getElementById('chat-window').innerHTML = "";
-            document.getElementById('chat-window').appendChild(divider);
-            if (data) { data.filter(m => avatars[m.sender]).forEach(m => draw(m)); }
-            
-            setTimeout(() => { syncReady = true; }, 1000);
-
-            _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
-                if(avatars[p.new.sender]) {
-                    draw(p.new);
-                    
-                    if (syncReady && p.new.sender !== activeUser) {
-                        if (document.getElementById('toggle-sound').checked) {
-                            const soundNode = document.getElementById('audio-' + p.new.sender.toLowerCase());
-                            if (soundNode) soundNode.play().catch(e => console.error("Audio block runtime protection:", e));
-                        }
-                        if (document.getElementById('toggle-modal').checked) {
-                            document.getElementById('msg-alert-text').innerText = "New message received from " + p.new.sender;
-                            document.getElementById('msg-alert-modal').style.display = 'flex';
-                        }
-                    }
-                }
-            }).subscribe();
-        }
-    </script>
 </body>
 </html>
