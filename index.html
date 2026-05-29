@@ -131,11 +131,11 @@
         
         /* LAYOUT ROW FOR EXTERNALIZED BUTTONS AND ICONS */
         #input-box { 
-            width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent; gap: 15px;
+            width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent;
         }
         
         .input-icons { 
-            display: flex; gap: 15px; font-size: 20px; color: var(--line-color); flex-shrink: 0; align-items: center;
+            display: flex; gap: 15px; font-size: 20px; color: var(--line-color); flex-shrink: 0; align-items: center; margin-right: 15px;
         }
         .input-icons i { cursor: pointer; }
         
@@ -146,7 +146,7 @@
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
         
         #send-btn { 
-            background: transparent; border: none; color: cyan; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0;
+            background: green; border: none; color: cyan; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; width: 34px; height: 34px; border-radius: 50%; margin-left: 10px;
         }
 
         #avatar-footer { width: 95%; max-width: 800px; margin-top: 15px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center; }
@@ -247,14 +247,14 @@
                 </div>
 
                 <div id="input-box">
-                    <div class="input-icons">
-                        <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
-                        <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
-                    </div>
                     <div id="msg-input-frame">
+                        <div class="input-icons">
+                            <i class="fa-regular fa-face-smile" id="toggle-emoji-btn"></i>
+                            <i class="fa-solid fa-paperclip" id="trigger-file-btn"></i>
+                        </div>
                         <input type="text" id="msg-input" placeholder="Type Message...">
+                        <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
-                    <button id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
 
