@@ -112,7 +112,7 @@
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        /* REUSED RICH THREE-TAB ASSET COMPONENT FROM GOOD.HTML */
+        /* REUSED RICH THREE-TAB ASSET COMPONENT */
         .emoji-panel { 
             display: none; position: absolute; width: 100%; max-width: 350px; 
             background: #2a2a2a; border: 1px solid #444; border-radius: 12px; 
@@ -129,6 +129,16 @@
 
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
+        /* FLOATING VERTICAL LINES */
+        #input-area-wrap::before, #input-area-wrap::after {
+            content: ""; position: absolute;
+            bottom: calc(100% + 15px); 
+            height: calc(50vh + 40px); 
+            width: 1px; background: var(--line-color); z-index: -1;
+        }
+        #input-area-wrap::before { left: 0; }
+        #input-area-wrap::after { right: 0; }
+
         /* LAYOUT ROW FOR EXTERNALIZED BUTTONS AND ICONS */
         #input-box { 
             width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent;
@@ -169,7 +179,7 @@
         .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
 
         @media (max-width: 800px) {
-            #chat-window::before { display: none; }
+            #chat-window::before, #input-area-wrap::before, #input-area-wrap::after { display: none; }
             #mobile-divider { display: block; }    
             .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             #chat-window { height: 55vh; }
@@ -323,7 +333,7 @@
             }
         });
 
-        // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
+        // REUSED DATA STRINGS AND LOADING ENGINES
         var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
         var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
         var cachedE = null;
