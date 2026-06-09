@@ -128,16 +128,6 @@
         .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
 
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
-        
-        /* FLOATING VERTICAL LINES */
-        #input-area-wrap::before, #input-area-wrap::after {
-            content: ""; position: absolute;
-            bottom: calc(100% + 15px); 
-            height: calc(50vh + 40px); 
-            width: 1px; background: var(--line-color); z-index: -1;
-        }
-        #input-area-wrap::before { left: 0; }
-        #input-area-wrap::after { right: 0; }
 
         /* LAYOUT ROW FOR EXTERNALIZED BUTTONS AND ICONS */
         #input-box { 
@@ -152,7 +142,19 @@
         /* INNER NARROWED TEXT INPUT FRAME */
         #msg-input-frame {
             flex: 1; height: 100%; border: 1px solid var(--line-color); background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
+            position: relative; /* REQUIRED TO ANCHOR THE LINES */
         }
+        
+        /* 4-POINT SPEC FLOATING VERTICAL LINES */
+        #msg-input-frame::before, #msg-input-frame::after {
+            content: ""; position: absolute;
+            bottom: calc(100% + 15px); 
+            height: calc(50vh + 40px); 
+            width: 1px; background: var(--line-color); z-index: -1;
+        }
+        #msg-input-frame::before { left: -1px; } 
+        #msg-input-frame::after { right: -1px; } 
+        
         #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
         
         #send-btn { 
@@ -179,7 +181,7 @@
         .alert-modal-box button { padding: 12px 25px; background: var(--line-color); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
 
         @media (max-width: 800px) {
-            #chat-window::before, #input-area-wrap::before, #input-area-wrap::after { display: none; }
+            #chat-window::before, #msg-input-frame::before, #msg-input-frame::after { display: none; }
             #mobile-divider { display: block; }    
             .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             #chat-window { height: 55vh; }
@@ -286,7 +288,6 @@
         let syncReady = false;
         const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
 
-        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
         const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
 
         async function verifyPassphrase(input) {
@@ -317,7 +318,6 @@
             startSync();
         };
 
-        // GLOBAL INTERCEPTOR: Watches screen visibility and processes Enter keys globally
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const gate = document.getElementById('gate-overlay');
@@ -333,7 +333,6 @@
             }
         });
 
-        // REUSED DATA STRINGS AND LOADING ENGINES
         var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
         var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
         var cachedE = null;
