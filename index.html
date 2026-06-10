@@ -145,12 +145,13 @@
             position: relative; /* REQUIRED TO ANCHOR THE LINES */
         }
         
-        /* 4-POINT SPEC FLOATING VERTICAL LINES */
+        /* FIXED FLOATING VERTICAL LINES */
         #msg-input-frame::before, #msg-input-frame::after {
             content: ""; position: absolute;
-            bottom: calc(100% + 15px); 
-            height: calc(50vh + 40px); 
-            width: 1px; background: var(--line-color); z-index: -1;
+            bottom: calc(100% + 15px); /* Perfectly jumps the gap to the chat window */
+            height: 50vh; /* Exactly matches the center line's height */
+            width: 1px; background: var(--line-color); 
+            z-index: 10; pointer-events: none; /* Forces visibility and prevents click-blocking */
         }
         #msg-input-frame::before { left: -1px; } 
         #msg-input-frame::after { right: -1px; } 
