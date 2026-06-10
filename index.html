@@ -129,21 +129,25 @@
 
         #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
-        /* LAYOUT ROW FOR EXTERNALIZED BUTTONS AND ICONS */
+        /* EXPANDED MESSAGE INPUT BOX CONTAINER */
         #input-box { 
             width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent;
         }
         
+        /* FULLY INTEGRATED INPUT BOX WITH LEFT/RIGHT JUSTIFIED ELEMENTS */
+        #msg-input-frame {
+            width: 100%; height: 100%; border: 1px solid var(--line-color); background: rgba(0,0,0,0.6); 
+            display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; justify-content: space-between; border-radius: 8px;
+        }
+
         .input-icons { 
-            display: flex; gap: 15px; font-size: 20px; color: var(--line-color); flex-shrink: 0; align-items: center; margin-right: 15px;
+            display: flex; gap: 15px; font-size: 20px; color: var(--line-color); flex-shrink: 0; align-items: center; margin-right: 15px; justify-content: flex-start;
         }
         .input-icons i { cursor: pointer; }
         
-        /* INNER NARROWED TEXT INPUT FRAME */
-        #msg-input-frame {
-            flex: 1; height: 100%; border: 1px solid var(--line-color); background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
+        #msg-input { 
+            flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; padding: 0 10px; width: 100%; 
         }
-        #msg-input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
         
         #send-btn { 
             background: green; border: none; color: cyan; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; width: 34px; height: 34px; border-radius: 50%; margin-left: 10px;
