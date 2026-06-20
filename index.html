@@ -9,7 +9,7 @@
     <style>
         :root { 
             --sarti: rgb(52, 137, 255); 
-            --selena: rgb(252, 200, 77); 
+            --gina: rgb(252, 200, 77); 
             --line-color: rgb(200, 191, 231); 
             --cy: cyan;
         }
@@ -108,7 +108,7 @@
 
         .bubble { border-radius: 12px; overflow: hidden; color: #000 !important; font-size: 16px; word-break: break-word; }
         .bubble.Sarti { background: var(--sarti); }
-        .bubble.Selena { background: var(--selena); }
+        .bubble.Gina { background: var(--gina); }
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
@@ -189,7 +189,7 @@
 <body>
 
     <audio id="audio-sarti" src="sarti_alert.mp4" preload="auto"></audio>
-    <audio id="audio-selena" src="selena_alert.mp4" preload="auto"></audio>
+    <audio id="audio-gina" src="gina_alert.mp4" preload="auto"></audio>
 
     <div id="msg-alert-modal">
         <div class="alert-modal-box">
@@ -211,7 +211,7 @@
         </div>
         <div id="login-form">
             <select id="user-select">
-                <option value="Selena">Selena</option>
+                <option value="Gina">Gina</option>
                 <option value="Sarti">Sarti</option>
             </select>
             <button id="login-btn">ENTER CHAT</button>
@@ -265,7 +265,7 @@
             <input type="file" id="hidden-file-element" style="display: none;">
 
             <div id="avatar-footer">
-                <div class="placeholder-circle"><img src="Selena.png"></div>
+                <div class="placeholder-circle"><img src="Gina.png"></div>
                 <div class="placeholder-circle"><img src="Sarti.png"></div>
             </div>
         </div>
@@ -278,10 +278,10 @@
 
         let activeUser = ""; 
         let syncReady = false;
-        const avatars = { 'Sarti': 'Sarti.png', 'Selena': 'Selena.png' };
+        const avatars = { 'Sarti': 'Sarti.png', 'Gina': 'Gina.png' };
 
-        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "S&SLovenest"
-        const SYSTEM_SECURE_TOKEN = "316eeca31f93de731bc8839bb14c464df8bf034db0a97868a3a8fba3c04824c5";
+        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "SGLovenest"
+        const SYSTEM_SECURE_TOKEN = "5270c8bed4b0111ecdda8c6414cba3d7f4c4d7d63078fc7120171e7733b09934";
 
         async function verifyPassphrase(input) {
             const encodedText = new TextEncoder().encode(input);
