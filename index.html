@@ -284,20 +284,38 @@
         const SYSTEM_SECURE_TOKEN = "5270c8bed4b0111ecdda8c6414cba3d7f4c4d7d63078fc7120171e7733b09934";
 
         async function verifyPassphrase(input) {
+            // FIX 2: Prevent silent crash on file:/// by checking for crypto.subtle
+            if (!window.crypto || !window.crypto.subtle) {
+                throw new Error("CRYPTO_BLOCKED");
+            }
+            
             const encodedText = new TextEncoder().encode(input);
             const digestBuffer = await crypto.subtle.digest('SHA-256', encodedText);
             const hexResult = Array.from(new Uint8Array(digestBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            // FIX 1: Log the exact generated hash to the console so you can grab it
+            console.log("The hash your browser generated for this password is:");
+            console.log(hexResult);
+            
             return hexResult === SYSTEM_SECURE_TOKEN;
         }
 
         async function handleGateSubmit() {
             const secretInput = document.getElementById('gate-password').value;
-            const authenticated = await verifyPassphrase(secretInput);
-            if (authenticated) {
-                document.getElementById('gate-overlay').style.display = 'none';
-                document.getElementById('overlay').style.display = 'flex';
-            } else {
-                document.getElementById('gate-error').innerText = "Incorrect Password";
+            try {
+                const authenticated = await verifyPassphrase(secretInput);
+                if (authenticated) {
+                    document.getElementById('gate-overlay').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'flex';
+                } else {
+                    document.getElementById('gate-error').innerText = "Incorrect Password (Check Console F12)";
+                }
+            } catch (error) {
+                if (error.message === "CRYPTO_BLOCKED") {
+                    document.getElementById('gate-error').innerText = "Security Error: Cannot run on file:///. Needs localhost or HTTPS.";
+                } else {
+                    document.getElementById('gate-error').innerText = "An error occurred verifying the password.";
+                }
             }
         }
 
