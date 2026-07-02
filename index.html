@@ -62,7 +62,6 @@
             text-transform: uppercase; letter-spacing: 2px; z-index: 20;
         }
 
-        /* ALERT SWITCHES PLATFORM CONSOLE */
         #controls-display {
             position: absolute; top: 65px; right: 40px;
             display: flex; flex-direction: column; gap: 8px;
@@ -83,13 +82,18 @@
         }
         #chat-window::-webkit-scrollbar { display: none; }
 
-        /* DESKTOP VERTICAL LINE */
+        /* CENTRAL VERTICAL LINE */
         #chat-window::before {
             content: ""; position: absolute; left: 50%; top: 0; bottom: 0;
             width: 1px; background: var(--line-color); z-index: -1;
         }
 
-        /* MOBILE HORIZONTAL LINE */
+        /* NEW SIDE VERTICAL LINES: Applied to input wrapper to match input box width */
+        #input-area-wrap { 
+            width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column;
+            background: linear-gradient(to right, var(--line-color) 1px, transparent 1px, transparent calc(100% - 1px), var(--line-color) calc(100% - 1px));
+        }
+
         #mobile-divider { 
             display: none; width: 100%; height: 1px; 
             background: var(--line-color); margin: 10px 0; order: 2;
@@ -112,7 +116,6 @@
         .lang-top { padding: 10px 15px; font-weight: bold; }
         .lang-bottom { padding: 8px 15px; font-size: 14px; opacity: 0.8; border-top: 1px solid rgba(0,0,0,0.1); }
 
-        /* REUSED RICH THREE-TAB ASSET COMPONENT FROM GOOD.HTML */
         .emoji-panel { 
             display: none; position: absolute; width: 100%; max-width: 350px; 
             background: #2a2a2a; border: 1px solid #444; border-radius: 12px; 
@@ -126,15 +129,11 @@
         .tab-bar { display: flex; background: #1e1e1e; border-top: 1px solid #444; }
         .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; cursor: pointer; font-weight: bold; }
         .tab-btn.active { color: white; background: #333; border-bottom: 2px solid var(--cy); }
-
-        #input-area-wrap { width: 92%; max-width: 1200px; position: relative; margin-top: 5px; display: flex; flex-direction: column; }
         
-        /* EXPANDED MESSAGE INPUT BOX CONTAINER */
         #input-box { 
             width: 100%; height: 50px; display: flex; align-items: center; box-sizing: border-box; background: transparent;
         }
         
-        /* FULLY INTEGRATED INPUT BOX WITH LEFT/RIGHT JUSTIFIED ELEMENTS */
         #msg-input-frame {
             width: 100%; height: 100%; border: 1px solid var(--line-color); background: rgba(0,0,0,0.6); 
             display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; justify-content: space-between; border-radius: 8px;
@@ -157,10 +156,6 @@
         .placeholder-circle { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--line-color); background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .placeholder-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-        .rich-rendered-media { max-width: 280px; max-height: 200px; display: block; border-radius: 8px; margin: 8px; object-fit: contain; }
-        .rich-rendered-file { display: inline-flex; align-items: center; gap: 10px; padding: 12px; color: #000; font-weight: bold; text-decoration: none; }
-
-        /* CUSTOM NOTIFICATION MODAL SYSTEM */
         #msg-alert-modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; 
@@ -174,6 +169,7 @@
 
         @media (max-width: 800px) {
             #chat-window::before { display: none; }
+            #input-area-wrap { background: none; }
             #mobile-divider { display: block; }    
             .msg-row.other, .msg-row.self { width: 100% !important; align-self: center; }
             #chat-window { height: 55vh; }
@@ -280,23 +276,13 @@
         let syncReady = false;
         const avatars = { 'Sarti': 'Sarti.png', 'Gina': 'Gina.png' };
 
-        // PRECALCULATED CRYPTO TARGET SIGNATURE FOR "SGLovenest"
         const SYSTEM_SECURE_TOKEN = "5270c8bed4b0111ecdda8c6414cba3d7f4c4d7d63078fc7120171e7733b09934";
 
         async function verifyPassphrase(input) {
-            // FIX 2: Prevent silent crash on file:/// by checking for crypto.subtle
-            if (!window.crypto || !window.crypto.subtle) {
-                throw new Error("CRYPTO_BLOCKED");
-            }
-            
+            if (!window.crypto || !window.crypto.subtle) throw new Error("CRYPTO_BLOCKED");
             const encodedText = new TextEncoder().encode(input);
             const digestBuffer = await crypto.subtle.digest('SHA-256', encodedText);
             const hexResult = Array.from(new Uint8Array(digestBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-            
-            // FIX 1: Log the exact generated hash to the console so you can grab it
-            console.log("The hash your browser generated for this password is:");
-            console.log(hexResult);
-            
             return hexResult === SYSTEM_SECURE_TOKEN;
         }
 
@@ -308,14 +294,10 @@
                     document.getElementById('gate-overlay').style.display = 'none';
                     document.getElementById('overlay').style.display = 'flex';
                 } else {
-                    document.getElementById('gate-error').innerText = "Incorrect Password (Check Console F12)";
+                    document.getElementById('gate-error').innerText = "Incorrect Password";
                 }
             } catch (error) {
-                if (error.message === "CRYPTO_BLOCKED") {
-                    document.getElementById('gate-error').innerText = "Security Error: Cannot run on file:///. Needs localhost or HTTPS.";
-                } else {
-                    document.getElementById('gate-error').innerText = "An error occurred verifying the password.";
-                }
+                document.getElementById('gate-error').innerText = "Security Error";
             }
         }
 
@@ -329,12 +311,10 @@
             startSync();
         };
 
-        // GLOBAL INTERCEPTOR: Watches screen visibility and processes Enter keys globally
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const gate = document.getElementById('gate-overlay');
                 const overlay = document.getElementById('overlay');
-                
                 if (gate && window.getComputedStyle(gate).display !== 'none') {
                     e.preventDefault();
                     handleGateSubmit();
@@ -345,7 +325,6 @@
             }
         });
 
-        // REUSED DATA STRINGS AND LOADING ENGINES FROM GOOD.HTML
         var G_KEY = "YuDsTmG8xFW90W5chPBjl6bMJyPXZ7q9";
         var E_URL = "https://cdn.jsdelivr.net/npm/unicode-emoji-json@latest/data-by-emoji.json";
         var cachedE = null;
@@ -363,9 +342,7 @@
             }
         };
 
-        document.getElementById('toggle-emoji-btn').onclick = function() {
-            toggleEmojiPanel();
-        };
+        document.getElementById('toggle-emoji-btn').onclick = function() { toggleEmojiPanel(); };
 
         async function getEmojiData() {
             if (cachedE) return cachedE;
@@ -406,9 +383,7 @@
             }
         };
 
-        document.getElementById('trigger-file-btn').onclick = () => {
-            document.getElementById('hidden-file-element').click();
-        };
+        document.getElementById('trigger-file-btn').onclick = () => { document.getElementById('hidden-file-element').click(); };
 
         document.getElementById('hidden-file-element').onchange = (e) => {
             const pickedFile = e.target.files[0];
@@ -493,9 +468,7 @@
         document.getElementById('send-btn').onclick = send;
         document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
 
-        document.getElementById('msg-alert-close').onclick = () => {
-            document.getElementById('msg-alert-modal').style.display = 'none';
-        };
+        document.getElementById('msg-alert-close').onclick = () => { document.getElementById('msg-alert-modal').style.display = 'none'; };
 
         document.addEventListener('mousedown', function(e) {
             if (!e.target.closest('#emoji-panel') && !e.target.closest('#toggle-emoji-btn')) {
@@ -516,7 +489,6 @@
             _client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
                 if(avatars[p.new.sender]) {
                     draw(p.new);
-                    
                     if (syncReady && p.new.sender !== activeUser) {
                         if (document.getElementById('toggle-sound').checked) {
                             const soundNode = document.getElementById('audio-' + p.new.sender.toLowerCase());
